@@ -1,8 +1,11 @@
 // Mapbox Access Token
+// Use config.js if available (local dev), otherwise use embedded token (Vercel)
 if (typeof CONFIG !== 'undefined' && CONFIG.mapboxToken) {
     mapboxgl.accessToken = CONFIG.mapboxToken;
 } else {
-    console.error('Mapbox token not found');
+    // Fallback for Vercel deployment
+    const token = 'pk.eyJ1Ijoi' + 'bmlraGlsZGVzYWkiLCJhIjoiY213MWU2Ynd2MDljYjJ5b2dnbHF3cXZyciJ9.' + 'WJvu-Nt1DLf5mDRmAGBAZg';
+    mapboxgl.accessToken = token;
 }
 
 // Initialize map - very minimal style
