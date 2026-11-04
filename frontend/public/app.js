@@ -1,58 +1,40 @@
 // Mapbox Access Token
-// Use config.js (local dev) or fail gracefully
 if (typeof CONFIG !== 'undefined' && CONFIG.mapboxToken) {
     mapboxgl.accessToken = CONFIG.mapboxToken;
 } else {
-    console.error('Mapbox token not found. Create config.js from config.example.js');
-    document.getElementById('loading').innerHTML = `
-        <div style="color: #e15554;">Mapbox Token Missing</div>
-        <div style="font-size: 12px; margin-top: 10px; color: #999;">
-            Copy config.example.js to config.js and add your token
-        </div>
-    `;
+    console.error('Mapbox token not found');
 }
 
-// Initialize map with dark theme
+// Initialize map - very minimal style
 const map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/dark-v11', // Dark theme
-    center: [-2.5, 54.5], // Center on UK
-    zoom: 5.5,
+    style: 'mapbox://styles/mapbox/dark-v11',
+    center: [-2.5, 54.5],
+    zoom: 5.8,
     pitch: 0,
     bearing: 0
 });
 
-// Add navigation controls
-map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+// Add minimal controls
+map.addControl(new mapboxgl.NavigationControl({
+    showCompass: false
+}), 'top-right');
 
-// Add scale control
-map.addControl(new mapboxgl.ScaleControl({
-    maxWidth: 100,
-    unit: 'metric'
-}), 'bottom-left');
-
-// Color scheme for plant types
-const PLANT_TYPE_COLORS = {
-    'Energy Storage System': '#667eea',
-    'Energy Storage System;PV Array (Photo Voltaic/solar)': '#ffd93d',
-    'Wind Onshore': '#6bcf7f',
-    'Wind Offshore': '#4d9de0',
-    'CCGT (Combined Cycle Gas Turbine)': '#e15554',
-    'default': '#999999'
+// Layer visibility state
+const layerState = {
+    'gsp-boundaries': true,
+    'projects': false,
+    'transmission': false
 };
 
-function getPlantTypeColor(plantType) {
-    return PLANT_TYPE_COLORS[plantType] || PLANT_TYPE_COLORS['default'];
-}
-
-// Load and display data
+// Load data
 map.on('load', async function() {
     try {
         // Load GSP Boundaries
         const gspResponse = await fetch('../../data/raw/infrastructure/gsp_boundaries_20261103.geojson');
         const gspData = await gspResponse.json();
 
-        // Add GSP boundaries layer
+        // Add GSP boundaries - very subtle
         map.addSource('gsp-boundaries', {
             type: 'geojson',
             data: gspData
@@ -64,7 +46,7 @@ map.on('load', async function() {
             source: 'gsp-boundaries',
             paint: {
                 'fill-color': '#667eea',
-                'fill-opacity': 0.05
+                'fill-opacity': 0.03
             }
         });
 
@@ -74,102 +56,306 @@ map.on('load', async function() {
             source: 'gsp-boundaries',
             paint: {
                 'line-color': '#667eea',
-                'line-width': 1,
-                'line-opacity': 0.3
+                'line-width': 0.5,
+                'line-opacity': 0.2
             }
         });
 
-        // Add hover effect for GSP regions
-        map.on('mouseenter', 'gsp-fill', () => {
-            map.getCanvas().style.cursor = 'pointer';
+        // Hover effects
+        let hoveredGSP = null;
+
+        map.on('mousemove', 'gsp-fill', (e) => {
+            if (e.features.length > 0) {
+                if (hoveredGSP !== null) {
+                    map.setFeatureState(
+                        { source: 'gsp-boundaries', id: hoveredGSP },
+                        { hover: false }
+                    );
+                }
+                hoveredGSP = e.features[0].id;
+                map.setFeatureState(
+                    { source: 'gsp-boundaries', id: hoveredGSP },
+                    { hover: true }
+                );
+                map.getCanvas().style.cursor = 'pointer';
+            }
         });
 
         map.on('mouseleave', 'gsp-fill', () => {
+            if (hoveredGSP !== null) {
+                map.setFeatureState(
+                    { source: 'gsp-boundaries', id: hoveredGSP },
+                    { hover: false }
+                );
+            }
+            hoveredGSP = null;
             map.getCanvas().style.cursor = '';
         });
 
-        // Show GSP info on click
+        // Click to show info
         map.on('click', 'gsp-fill', (e) => {
-            const properties = e.features[0].properties;
+            const props = e.features[0].properties;
 
-            new mapboxgl.Popup()
-                .setLngLat(e.lngLat)
-                .setHTML(`
-                    <div class="popup-title">GSP Region</div>
-                    <div class="popup-field">
-                        <span class="popup-label">Region:</span>
-                        <span class="popup-value">${properties.RegionName || 'Unknown'}</span>
-                    </div>
-                    <div class="popup-field">
-                        <span class="popup-label">ID:</span>
-                        <span class="popup-value">${properties.RegionID || 'N/A'}</span>
-                    </div>
-                `)
-                .addTo(map);
+            new mapboxgl.Popup({
+                closeButton: true,
+                closeOnClick: true
+            })
+            .setLngLat(e.lngLat)
+            .setHTML(`
+                <div class="popup-title">Grid Supply Point</div>
+                <div class="popup-row">
+                    <div class="popup-label">Region</div>
+                    <div class="popup-value">${props.RegionName || 'Unknown'}</div>
+                </div>
+                <div class="popup-row">
+                    <div class="popup-label">ID</div>
+                    <div class="popup-value">${props.RegionID || 'N/A'}</div>
+                </div>
+            `)
+            .addTo(map);
         });
 
-        // Update stats
-        document.getElementById('gspRegions').textContent = gspData.features.length;
+        // Load TEC Register Projects
+        const projectsResponse = await fetch('data/tec_register_points.geojson');
+        const projectsData = await projectsResponse.json();
 
-        // Try to load TEC Register stats
-        await loadTECStats();
+        // Add projects source with clustering
+        map.addSource('projects', {
+            type: 'geojson',
+            data: projectsData,
+            cluster: true,
+            clusterMaxZoom: 10,
+            clusterRadius: 50
+        });
 
-        // Hide loading screen
+        // Cluster circles
+        map.addLayer({
+            id: 'clusters',
+            type: 'circle',
+            source: 'projects',
+            filter: ['has', 'point_count'],
+            paint: {
+                'circle-color': [
+                    'step',
+                    ['get', 'point_count'],
+                    '#667eea',
+                    10,
+                    '#ffd93d',
+                    30,
+                    '#e15554'
+                ],
+                'circle-radius': [
+                    'step',
+                    ['get', 'point_count'],
+                    15,
+                    10,
+                    20,
+                    30,
+                    25
+                ],
+                'circle-opacity': 0.7,
+                'circle-stroke-width': 2,
+                'circle-stroke-color': '#fff',
+                'circle-stroke-opacity': 0.3
+            }
+        });
+
+        // Cluster count labels
+        map.addLayer({
+            id: 'cluster-count',
+            type: 'symbol',
+            source: 'projects',
+            filter: ['has', 'point_count'],
+            layout: {
+                'text-field': '{point_count_abbreviated}',
+                'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                'text-size': 11
+            },
+            paint: {
+                'text-color': '#ffffff'
+            }
+        });
+
+        // Individual project points
+        map.addLayer({
+            id: 'unclustered-point',
+            type: 'circle',
+            source: 'projects',
+            filter: ['!', ['has', 'point_count']],
+            paint: {
+                'circle-color': ['get', 'color'],
+                'circle-radius': 6,
+                'circle-stroke-width': 1.5,
+                'circle-stroke-color': '#fff',
+                'circle-stroke-opacity': 0.5,
+                'circle-opacity': 0.8
+            }
+        });
+
+        // Click on clusters to zoom
+        map.on('click', 'clusters', (e) => {
+            const features = map.queryRenderedFeatures(e.point, {
+                layers: ['clusters']
+            });
+            const clusterId = features[0].properties.cluster_id;
+            map.getSource('projects').getClusterExpansionZoom(
+                clusterId,
+                (err, zoom) => {
+                    if (err) return;
+
+                    map.easeTo({
+                        center: features[0].geometry.coordinates,
+                        zoom: zoom
+                    });
+                }
+            );
+        });
+
+        // Show project popup on click
+        map.on('click', 'unclustered-point', (e) => {
+            const props = e.features[0].properties;
+
+            new mapboxgl.Popup({
+                closeButton: true,
+                closeOnClick: true
+            })
+            .setLngLat(e.features[0].geometry.coordinates)
+            .setHTML(`
+                <div class="popup-title">${props.project_name}</div>
+                <div class="popup-row">
+                    <div class="popup-label">Customer</div>
+                    <div class="popup-value">${props.customer}</div>
+                </div>
+                <div class="popup-row">
+                    <div class="popup-label">Site</div>
+                    <div class="popup-value">${props.connection_site}</div>
+                </div>
+                <div class="popup-row">
+                    <div class="popup-label">Type</div>
+                    <div class="popup-value">${props.category}</div>
+                </div>
+                <div class="popup-row">
+                    <div class="popup-label">Capacity</div>
+                    <div class="popup-value">${props.capacity_mw} MW</div>
+                </div>
+                <div class="popup-row">
+                    <div class="popup-label">Status</div>
+                    <div class="popup-value">${props.status}</div>
+                </div>
+            `)
+            .addTo(map);
+        });
+
+        // Change cursor on hover
+        map.on('mouseenter', 'clusters', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'clusters', () => {
+            map.getCanvas().style.cursor = '';
+        });
+        map.on('mouseenter', 'unclustered-point', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+        map.on('mouseleave', 'unclustered-point', () => {
+            map.getCanvas().style.cursor = '';
+        });
+
+        // Initially hide projects layer
+        map.setLayoutProperty('clusters', 'visibility', 'none');
+        map.setLayoutProperty('cluster-count', 'visibility', 'none');
+        map.setLayoutProperty('unclustered-point', 'visibility', 'none');
+
+        // Hide loading
         document.getElementById('loading').classList.add('hidden');
 
-        console.log('✓ Map loaded successfully');
-        console.log(`✓ GSP Regions: ${gspData.features.length}`);
+        console.log('✓ Map loaded');
+        console.log('✓ GSP Regions:', gspData.features.length);
+        console.log('✓ Projects:', projectsData.features.length);
 
     } catch (error) {
         console.error('Error loading data:', error);
         document.getElementById('loading').innerHTML = `
-            <div style="color: #e15554;">Error loading data</div>
-            <div style="font-size: 12px; margin-top: 10px; color: #999;">
-                Check console for details
+            <div style="color: #e15554; font-size: 14px;">Error loading data</div>
+            <div style="font-size: 11px; margin-top: 8px; color: #666;">
+                ${error.message}
             </div>
         `;
     }
 });
 
-async function loadTECStats() {
-    try {
-        // For now, just set the stats we know from the data
-        // In production, you'd fetch and parse the CSV
-        document.getElementById('totalProjects').textContent = '2,219';
-        document.getElementById('totalCapacity').textContent = '81.7';
-        document.getElementById('connections').textContent = '1,259';
-    } catch (error) {
-        console.error('Error loading TEC stats:', error);
-    }
-}
+// Layer toggles
+document.querySelectorAll('.layer-toggle').forEach(toggle => {
+    toggle.addEventListener('click', function() {
+        const layer = this.getAttribute('data-layer');
 
-// Add keyboard shortcuts
+        if (layer) {
+            this.classList.toggle('active');
+
+            // Toggle layer visibility
+            const isActive = this.classList.contains('active');
+            layerState[layer] = isActive;
+
+            // Update map layers based on type
+            if (layer === 'projects') {
+                // Toggle project clusters and points
+                const visibility = isActive ? 'visible' : 'none';
+                if (map.getLayer('clusters')) {
+                    map.setLayoutProperty('clusters', 'visibility', visibility);
+                }
+                if (map.getLayer('cluster-count')) {
+                    map.setLayoutProperty('cluster-count', 'visibility', visibility);
+                }
+                if (map.getLayer('unclustered-point')) {
+                    map.setLayoutProperty('unclustered-point', 'visibility', visibility);
+                }
+            } else {
+                // Toggle GSP boundaries or other layers
+                if (map.getLayer(`${layer}-fill`)) {
+                    map.setLayoutProperty(
+                        `${layer}-fill`,
+                        'visibility',
+                        isActive ? 'visible' : 'none'
+                    );
+                }
+                if (map.getLayer(`${layer}-outline`)) {
+                    map.setLayoutProperty(
+                        `${layer}-outline`,
+                        'visibility',
+                        isActive ? 'visible' : 'none'
+                    );
+                }
+            }
+        }
+    });
+});
+
+// Search functionality (placeholder)
+document.getElementById('searchBox').addEventListener('input', function(e) {
+    const query = e.target.value.toLowerCase();
+    console.log('Search:', query);
+    // TODO: Implement search filtering
+});
+
+// Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
-    // Press 'H' to toggle header
-    if (e.key === 'h' || e.key === 'H') {
-        const header = document.querySelector('.header');
-        header.style.display = header.style.display === 'none' ? 'block' : 'none';
+    if (e.key === 'Escape') {
+        // Close popups
+        const popups = document.getElementsByClassName('mapboxgl-popup');
+        if (popups.length) {
+            popups[0].remove();
+        }
     }
 
-    // Press 'L' to toggle legend
-    if (e.key === 'l' || e.key === 'L') {
-        const legend = document.querySelector('.legend');
-        legend.style.display = legend.style.display === 'none' ? 'block' : 'none';
-    }
-
-    // Press 'R' to reset view
     if (e.key === 'r' || e.key === 'R') {
+        // Reset view
         map.flyTo({
             center: [-2.5, 54.5],
-            zoom: 5.5,
+            zoom: 5.8,
             pitch: 0,
             bearing: 0
         });
     }
 });
 
-console.log('UK Energy Digital Twin - MVP v0.1');
-console.log('Keyboard shortcuts:');
-console.log('  H - Toggle header');
-console.log('  L - Toggle legend');
-console.log('  R - Reset view');
+console.log('UK Energy Grid - Minimal Interface');
+console.log('Press R to reset view, ESC to close popups');
