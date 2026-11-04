@@ -17,14 +17,24 @@ map.addControl(new mapboxgl.NavigationControl({
     showCompass: false
 }), 'top-right');
 
+// Remove all labels when style loads
+map.on('style.load', function() {
+    const layers = map.getStyle().layers;
+    // Remove all symbol layers (text labels)
+    layers.forEach(layer => {
+        if (layer.type === 'symbol') {
+            map.removeLayer(layer.id);
+        }
+    });
+});
+
 // Hide loading screen when map loads
 map.on('load', function() {
     const loading = document.getElementById('loading');
     if (loading) {
         loading.classList.add('hidden');
     }
-    console.log('✅ Map loaded - Dark Matter style');
-    console.log('💡 Zoom in to see buildings (visible at zoom 13+)');
+    console.log('✅ Map loaded - Mapbox dark without labels');
 });
 
 // Error handling
