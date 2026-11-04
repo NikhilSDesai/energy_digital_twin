@@ -65,8 +65,8 @@ try {
                 }
             ]
         },
-        center: [-0.1276, 51.5074],
-        zoom: 11,
+        center: [-2.5, 54.5],
+        zoom: 5.8,
         pitch: 0,
         bearing: 0
     });
