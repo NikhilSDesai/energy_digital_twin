@@ -1,0 +1,173 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "England-Scotland Interconnector",
+        "voltage": "400kV"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -0.1276,
+            51.5074
+          ],
+          [
+            -1.8904,
+            52.4862
+          ],
+          [
+            -2.2426,
+            53.4808
+          ],
+          [
+            -2.9915,
+            54.4042
+          ],
+          [
+            -3.1883,
+            55.9533
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "East Coast Main",
+        "voltage": "400kV"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -0.1276,
+            51.5074
+          ],
+          [
+            0.1278,
+            52.2053
+          ],
+          [
+            0.719,
+            52.6309
+          ],
+          [
+            -1.0813,
+            53.9581
+          ],
+          [
+            -1.6178,
+            54.9783
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "West Coast Main",
+        "voltage": "400kV"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -3.436,
+            50.3755
+          ],
+          [
+            -3.5339,
+            50.7236
+          ],
+          [
+            -2.5879,
+            51.4545
+          ],
+          [
+            -2.9915,
+            53.4084
+          ],
+          [
+            -4.2576,
+            55.8642
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Midlands Link",
+        "voltage": "275kV"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -1.8904,
+            52.4862
+          ],
+          [
+            -1.4701,
+            52.9225
+          ],
+          [
+            -1.5491,
+            53.8008
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "South Coast Link",
+        "voltage": "275kV"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -0.1276,
+            51.5074
+          ],
+          [
+            -0.5706,
+            50.8292
+          ],
+          [
+            -1.4043,
+            50.9097
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Wales Link",
+        "voltage": "400kV"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -2.5879,
+            51.4545
+          ],
+          [
+            -3.1791,
+            51.4816
+          ],
+          [
+            -4.0814,
+            53.1435
+          ]
+        ]
+      }
+    }
+  ]
+}
