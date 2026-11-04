@@ -1,22 +1,53 @@
-// Mapbox Access Token
-// Use config.js if available (local dev), otherwise use embedded token (Vercel)
-if (typeof CONFIG !== 'undefined' && CONFIG.mapboxToken) {
-    mapboxgl.accessToken = CONFIG.mapboxToken;
-} else {
-    // Fallback for Vercel deployment
-    const token = 'pk.eyJ1Ijoi' + 'bmlraGlsZGVzYWkiLCJhIjoiY213MWU2Ynd2MDljYjJ5b2dnbHF3cXZyciJ9.' + 'WJvu-Nt1DLf5mDRmAGBAZg';
-    mapboxgl.accessToken = token;
+// Error display helper
+function showError(message) {
+    console.error(message);
+    const loading = document.getElementById('loading');
+    if (loading) {
+        loading.innerHTML = `
+            <div style="color: #e15554; font-size: 14px; margin-bottom: 10px;">❌ Error loading map</div>
+            <div style="font-size: 12px; color: #999;">${message}</div>
+        `;
+    }
 }
 
-// Initialize map - very minimal style
-const map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/dark-v11',
-    center: [-2.5, 54.5],
-    zoom: 5.8,
-    pitch: 0,
-    bearing: 0
-});
+let map;
+
+try {
+    console.log('1. Starting map initialization...');
+
+    // Check if mapboxgl is loaded
+    if (typeof mapboxgl === 'undefined') {
+        throw new Error('Mapbox GL JS library not loaded');
+    }
+    console.log('2. Mapbox GL JS loaded');
+
+    // Mapbox Access Token
+    // Use config.js if available (local dev), otherwise use embedded token (Vercel)
+    if (typeof CONFIG !== 'undefined' && CONFIG.mapboxToken) {
+        mapboxgl.accessToken = CONFIG.mapboxToken;
+        console.log('3. Using config.js token');
+    } else {
+        // Fallback for Vercel deployment
+        const token = 'pk.eyJ1Ijoi' + 'bmlraGlsZGVzYWkiLCJhIjoiY213MWU2Ynd2MDljYjJ5b2dnbHF3cXZyciJ9.' + 'WJvu-Nt1DLf5mDRmAGBAZg';
+        mapboxgl.accessToken = token;
+        console.log('3. Using embedded token');
+    }
+
+    // Initialize map - very minimal style
+    console.log('4. Creating map...');
+    map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/dark-v11',
+        center: [-2.5, 54.5],
+        zoom: 5.8,
+        pitch: 0,
+        bearing: 0
+    });
+    console.log('5. Map created successfully');
+} catch (error) {
+    showError('Initialization failed: ' + error.message);
+    throw error;
+}
 
 // Add minimal controls
 map.addControl(new mapboxgl.NavigationControl({
@@ -30,12 +61,25 @@ const layerState = {
     'transmission': false
 };
 
+// Handle map errors
+map.on('error', (e) => {
+    console.error('Mapbox error:', e);
+    showError(`Mapbox error: ${e.error ? e.error.message : 'Unknown error'}`);
+});
+
 // Load data
 map.on('load', async function() {
+    console.log('6. Map load event fired');
     try {
         // Load GSP Boundaries
+        console.log('7. Fetching GSP boundaries...');
         const gspResponse = await fetch('/data/gsp_boundaries.geojson');
+        if (!gspResponse.ok) {
+            throw new Error(`GSP boundaries fetch failed: ${gspResponse.status}`);
+        }
+        console.log('8. GSP boundaries fetched, parsing JSON...');
         const gspData = await gspResponse.json();
+        console.log('9. GSP data loaded:', gspData.features.length, 'features');
 
         // Add GSP boundaries - very subtle
         map.addSource('gsp-boundaries', {
@@ -269,11 +313,12 @@ map.on('load', async function() {
         map.setLayoutProperty('unclustered-point', 'visibility', 'none');
 
         // Hide loading
+        console.log('10. All data loaded successfully, hiding loading screen...');
         document.getElementById('loading').classList.add('hidden');
 
-        console.log('✓ Map loaded');
-        console.log('✓ GSP Regions:', gspData.features.length);
-        console.log('✓ Projects:', projectsData.features.length);
+        console.log('✅ Map fully loaded and ready');
+        console.log('✅ GSP Regions:', gspData.features.length);
+        console.log('✅ Projects:', projectsData.features.length);
 
     } catch (error) {
         console.error('Error loading data:', error);
