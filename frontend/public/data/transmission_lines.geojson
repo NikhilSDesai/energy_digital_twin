@@ -4,31 +4,48 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "England-Scotland Interconnector",
-        "voltage": "400kV"
+        "name": "Scotland-England Interconnector East",
+        "voltage": "400kV",
+        "operator": "National Grid ESO"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
           [
-            -0.1276,
-            51.5074
+            -4.2518,
+            55.8642
           ],
           [
-            -1.8904,
-            52.4862
+            -3.876,
+            55.7
+          ],
+          [
+            -3.4284,
+            55.3781
+          ],
+          [
+            -2.967,
+            55.0
+          ],
+          [
+            -2.6086,
+            54.7023
           ],
           [
             -2.2426,
-            53.4808
+            54.5766
           ],
           [
-            -2.9915,
-            54.4042
+            -1.7312,
+            54.5227
           ],
           [
-            -3.1883,
-            55.9533
+            -1.5491,
+            54.0
+          ],
+          [
+            -1.2799,
+            53.6308
           ]
         ]
       }
@@ -36,31 +53,109 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "East Coast Main",
-        "voltage": "400kV"
+        "name": "Scotland-England Interconnector West",
+        "voltage": "400kV",
+        "operator": "National Grid ESO"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
           [
-            -0.1276,
-            51.5074
+            -4.497,
+            55.7
+          ],
+          [
+            -4.2518,
+            55.6
+          ],
+          [
+            -3.95,
+            55.2
+          ],
+          [
+            -3.5,
+            54.9
+          ],
+          [
+            -3.05,
+            54.65
+          ],
+          [
+            -2.9915,
+            54.3781
+          ],
+          [
+            -2.75,
+            54.0
+          ],
+          [
+            -2.5879,
+            53.74
+          ],
+          [
+            -2.4426,
+            53.4808
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Eastern 400kV Spine",
+        "voltage": "400kV",
+        "operator": "National Grid ESO"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.0,
+            51.5
+          ],
+          [
+            0.0876,
+            51.7
           ],
           [
             0.1278,
             52.2053
           ],
           [
-            0.719,
-            52.6309
+            0.4,
+            52.6
           ],
           [
-            -1.0813,
+            0.28,
+            53.08
+          ],
+          [
+            -0.5406,
+            53.2307
+          ],
+          [
+            -1.08,
             53.9581
           ],
           [
-            -1.6178,
-            54.9783
+            -1.4,
+            54.3
+          ],
+          [
+            -1.73,
+            54.78
+          ],
+          [
+            -2.25,
+            55.0
+          ],
+          [
+            -2.6,
+            55.3
+          ],
+          [
+            -3.18,
+            55.95
           ]
         ]
       }
@@ -68,31 +163,142 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "West Coast Main",
-        "voltage": "400kV"
+        "name": "Western 400kV Spine",
+        "voltage": "400kV",
+        "operator": "National Grid ESO"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
           [
-            -3.436,
-            50.3755
+            -0.3,
+            51.5
           ],
           [
-            -3.5339,
-            50.7236
+            -0.6,
+            51.75
+          ],
+          [
+            -0.9,
+            52.05
+          ],
+          [
+            -1.47,
+            52.48
+          ],
+          [
+            -1.8904,
+            52.4862
+          ],
+          [
+            -2.12,
+            52.7
+          ],
+          [
+            -2.24,
+            53.1
+          ],
+          [
+            -2.4426,
+            53.4808
+          ],
+          [
+            -2.65,
+            53.7
+          ],
+          [
+            -2.85,
+            54.05
+          ],
+          [
+            -2.9915,
+            54.4042
+          ],
+          [
+            -3.2,
+            54.7
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "South Coast 400kV",
+        "voltage": "400kV",
+        "operator": "National Grid ESO"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -1.4043,
+            50.9097
+          ],
+          [
+            -1.0,
+            51.1
+          ],
+          [
+            -0.75,
+            51.25
+          ],
+          [
+            -0.5,
+            51.35
+          ],
+          [
+            -0.1276,
+            51.5074
+          ],
+          [
+            0.3,
+            51.55
+          ],
+          [
+            0.7,
+            51.5
+          ],
+          [
+            1.09,
+            51.2787
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "South Wales 400kV",
+        "voltage": "400kV",
+        "operator": "National Grid ESO"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -3.9436,
+            51.6201
+          ],
+          [
+            -3.5,
+            51.6
+          ],
+          [
+            -3.1791,
+            51.4816
+          ],
+          [
+            -2.99,
+            51.45
           ],
           [
             -2.5879,
             51.4545
           ],
           [
-            -2.9915,
-            53.4084
-          ],
-          [
-            -4.2576,
-            55.8642
+            -2.35,
+            51.5
           ]
         ]
       }
@@ -100,8 +306,42 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Midlands Link",
-        "voltage": "275kV"
+        "name": "North Wales Link",
+        "voltage": "400kV",
+        "operator": "National Grid ESO"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -4.27,
+            53.1435
+          ],
+          [
+            -4.0,
+            53.2
+          ],
+          [
+            -3.5,
+            53.25
+          ],
+          [
+            -3.0,
+            53.28
+          ],
+          [
+            -2.5879,
+            53.4
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Midlands Ring North",
+        "voltage": "400kV",
+        "operator": "National Grid ESO"
       },
       "geometry": {
         "type": "LineString",
@@ -115,8 +355,16 @@
             52.9225
           ],
           [
-            -1.5491,
-            53.8008
+            -1.08,
+            53.0
+          ],
+          [
+            -0.8,
+            53.1
+          ],
+          [
+            -0.5406,
+            53.2307
           ]
         ]
       }
@@ -124,23 +372,32 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "South Coast Link",
-        "voltage": "275kV"
+        "name": "Midlands Ring South",
+        "voltage": "400kV",
+        "operator": "National Grid ESO"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
           [
-            -0.1276,
-            51.5074
+            -1.8904,
+            52.4862
           ],
           [
-            -0.5706,
-            50.8292
+            -1.5,
+            52.19
           ],
           [
-            -1.4043,
-            50.9097
+            -1.13,
+            52.04
+          ],
+          [
+            -0.75,
+            51.9
+          ],
+          [
+            -0.45,
+            51.7
           ]
         ]
       }
@@ -148,23 +405,160 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "Wales Link",
-        "voltage": "400kV"
+        "name": "Southwest Main",
+        "voltage": "400kV",
+        "operator": "National Grid ESO"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
+          [
+            -4.14,
+            50.3755
+          ],
+          [
+            -3.8,
+            50.5
+          ],
+          [
+            -3.5339,
+            50.7236
+          ],
+          [
+            -3.2,
+            51.0
+          ],
+          [
+            -2.99,
+            51.2
+          ],
           [
             -2.5879,
             51.4545
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "East Anglia Main",
+        "voltage": "400kV",
+        "operator": "National Grid ESO"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.1278,
+            52.2053
           ],
           [
-            -3.1791,
-            51.4816
+            0.4,
+            52.4
           ],
           [
-            -4.0814,
-            53.1435
+            0.719,
+            52.6309
+          ],
+          [
+            1.1,
+            52.7
+          ],
+          [
+            1.3,
+            52.65
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Essex Coast",
+        "voltage": "400kV",
+        "operator": "National Grid ESO"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0.0,
+            51.5
+          ],
+          [
+            0.35,
+            51.54
+          ],
+          [
+            0.72,
+            51.54
+          ],
+          [
+            1.0,
+            51.8
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Trans-Pennine Link",
+        "voltage": "275kV",
+        "operator": "National Grid ESO"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -2.2426,
+            53.4808
+          ],
+          [
+            -2.0,
+            53.55
+          ],
+          [
+            -1.78,
+            53.64
+          ],
+          [
+            -1.5491,
+            53.8008
+          ],
+          [
+            -1.2,
+            53.9
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Humber Link",
+        "voltage": "400kV",
+        "operator": "National Grid ESO"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -1.5491,
+            53.8008
+          ],
+          [
+            -1.2,
+            53.75
+          ],
+          [
+            -0.8,
+            53.74
+          ],
+          [
+            -0.34,
+            53.7446
           ]
         ]
       }
