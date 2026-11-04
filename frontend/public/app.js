@@ -54,20 +54,42 @@ try {
                     }
                 },
                 {
+                    id: 'land',
+                    type: 'fill',
+                    source: 'mapbox',
+                    'source-layer': 'landcover',
+                    paint: {
+                        'fill-color': '#0a0a0a',
+                        'fill-opacity': 0.3
+                    }
+                },
+                {
+                    id: 'admin-boundaries',
+                    type: 'line',
+                    source: 'mapbox',
+                    'source-layer': 'admin',
+                    filter: ['==', 'admin_level', 0],
+                    paint: {
+                        'line-color': '#333333',
+                        'line-width': 0.5,
+                        'line-opacity': 0.2
+                    }
+                },
+                {
                     id: 'buildings',
                     type: 'fill',
                     source: 'mapbox',
                     'source-layer': 'building',
+                    minzoom: 10,
                     paint: {
                         'fill-color': '#ffffff',
                         'fill-opacity': [
                             'interpolate',
                             ['linear'],
                             ['zoom'],
-                            5, 0.08,
-                            8, 0.12,
-                            12, 0.18,
-                            16, 0.25
+                            10, 0.15,
+                            12, 0.25,
+                            16, 0.35
                         ]
                     }
                 }
