@@ -1,5 +1,16 @@
-// Mapbox Access Token from config
-mapboxgl.accessToken = CONFIG.mapboxToken;
+// Mapbox Access Token
+// Use config.js (local dev) or fail gracefully
+if (typeof CONFIG !== 'undefined' && CONFIG.mapboxToken) {
+    mapboxgl.accessToken = CONFIG.mapboxToken;
+} else {
+    console.error('Mapbox token not found. Create config.js from config.example.js');
+    document.getElementById('loading').innerHTML = `
+        <div style="color: #e15554;">Mapbox Token Missing</div>
+        <div style="font-size: 12px; margin-top: 10px; color: #999;">
+            Copy config.example.js to config.js and add your token
+        </div>
+    `;
+}
 
 // Initialize map with dark theme
 const map = new mapboxgl.Map({
