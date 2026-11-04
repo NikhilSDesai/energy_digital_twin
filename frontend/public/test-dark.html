@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dark Matter Test</title>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        #debug { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.9); padding: 10px; z-index: 1000; font-family: monospace; font-size: 12px; max-width: 400px; }
+    </style>
+</head>
+<body>
+    <div id="debug">Initializing...</div>
+    <div id="map"></div>
+
+    <script>
+        const debug = document.getElementById('debug');
+        function log(msg) {
+            debug.innerHTML += '<br>' + msg;
+            console.log(msg);
+        }
+
+        try {
+            log('1. Setting token...');
+            const token = 'pk.eyJ1Ijoi' + 'bmlraGlsZGVzYWkiLCJhIjoiY213MWU2Ynd2MDljYjJ5b2dnbHF3cXZyciJ9.' + 'WJvu-Nt1DLf5mDRmAGBAZg';
+            mapboxgl.accessToken = token;
+
+            log('2. Creating map with custom style...');
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: {
+                    version: 8,
+                    sources: {
+                        'mapbox': {
+                            type: 'vector',
+                            url: 'mapbox://mapbox.mapbox-streets-v8'
+                        }
+                    },
+                    layers: [
+                        {
+                            id: 'background',
+                            type: 'background',
+                            paint: {
+                                'background-color': '#000000'
+                            }
+                        },
+                        {
+                            id: 'buildings',
+                            type: 'fill',
+                            source: 'mapbox',
+                            'source-layer': 'building',
+                            paint: {
+                                'fill-color': '#ffffff',
+                                'fill-opacity': 0.3
+                            }
+                        }
+                    ]
+                },
+                center: [-2.5, 54.5],
+                zoom: 5.8,
+                pitch: 0,
+                bearing: 0
+            });
+
+            log('3. Map object created, waiting for load...');
+
+            map.on('load', function() {
+                log('✅ MAP LOADED! Current zoom: ' + map.getZoom());
+                log('💡 Buildings appear at zoom 13+. Try zooming in!');
+                debug.style.background = 'rgba(0,255,0,0.2)';
+            });
+
+            map.on('error', function(e) {
+                log('❌ ERROR: ' + JSON.stringify(e));
+                debug.style.background = 'rgba(255,0,0,0.8)';
+                debug.style.color = 'white';
+            });
+
+        } catch (error) {
+            log('❌ EXCEPTION: ' + error.message);
+            debug.style.background = 'rgba(255,0,0,0.8)';
+            debug.style.color = 'white';
+        }
+    </script>
+</body>
+</html>
