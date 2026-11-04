@@ -60,3 +60,4 @@ frontend/public/config.js
 
 # OS
 Thumbs.db
+.vercel

@@ -34,7 +34,7 @@ const layerState = {
 map.on('load', async function() {
     try {
         // Load GSP Boundaries
-        const gspResponse = await fetch('../../data/raw/infrastructure/gsp_boundaries_20261103.geojson');
+        const gspResponse = await fetch('/data/gsp_boundaries.geojson');
         const gspData = await gspResponse.json();
 
         // Add GSP boundaries - very subtle
@@ -119,7 +119,7 @@ map.on('load', async function() {
         });
 
         // Load TEC Register Projects
-        const projectsResponse = await fetch('data/tec_register_points.geojson');
+        const projectsResponse = await fetch('/data/tec_register_points.geojson');
         const projectsData = await projectsResponse.json();
 
         // Add projects source with clustering
