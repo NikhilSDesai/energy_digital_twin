@@ -1,6 +1,5 @@
-// Mapbox Access Token
-// TODO: Replace with your Mapbox token
-mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN_HERE';
+// Mapbox Access Token from config
+mapboxgl.accessToken = CONFIG.mapboxToken;
 
 // Initialize map with dark theme
 const map = new mapboxgl.Map({

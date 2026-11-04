@@ -56,6 +56,7 @@ data/processed/**/*
 secrets/
 *.key
 *.pem
+frontend/public/config.js
 
 # OS
 Thumbs.db
