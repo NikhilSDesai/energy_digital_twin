@@ -73,14 +73,25 @@ try {
                     }
                 },
                 {
+                    id: 'landuse-urban',
+                    type: 'fill',
+                    source: 'mapbox',
+                    'source-layer': 'landuse',
+                    filter: ['==', 'class', 'residential'],
+                    paint: {
+                        'fill-color': '#2a2a2a',
+                        'fill-opacity': 0.8
+                    }
+                },
+                {
                     id: 'buildings',
                     type: 'fill',
                     source: 'mapbox',
                     'source-layer': 'building',
-                    minzoom: 10,
+                    minzoom: 4,
                     paint: {
-                        'fill-color': '#1a1a1a',
-                        'fill-opacity': 0.5
+                        'fill-color': '#2a2a2a',
+                        'fill-opacity': 0.8
                     }
                 },
                 {
@@ -88,11 +99,11 @@ try {
                     type: 'line',
                     source: 'mapbox',
                     'source-layer': 'building',
-                    minzoom: 14,
+                    minzoom: 12,
                     paint: {
-                        'line-color': '#1f1f1f',
+                        'line-color': '#333333',
                         'line-width': 0.5,
-                        'line-opacity': 0.5
+                        'line-opacity': 0.6
                     }
                 }
             ]
