@@ -1,0 +1,11 @@
+venv/
+data/raw/
+data/processed/
+scripts/
+__pycache__/
+*.pyc
+.git/
+README.md
+DATA_INVENTORY.md
+requirements.txt
+start_frontend.sh

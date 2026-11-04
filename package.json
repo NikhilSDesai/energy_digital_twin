@@ -1,0 +1,17 @@
+{
+  "name": "uk-energy-digital-twin",
+  "version": "0.1.0",
+  "description": "Spatial digital twin for UK energy infrastructure - visualize 741 GW connection queue, analyze grid constraints, forecast demand",
+  "scripts": {
+    "dev": "cd frontend/public && python3 -m http.server 8000",
+    "deploy": "vercel --prod"
+  },
+  "keywords": ["energy", "digital-twin", "uk", "grid", "visualization", "mapbox", "neso", "queue"],
+  "author": "Nikhil Desai",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NikhilSDesai/energy_digital_twin.git"
+  },
+  "homepage": "https://github.com/NikhilSDesai/energy_digital_twin#readme"
+}
