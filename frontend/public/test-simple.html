@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test</title>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        #status { position: absolute; top: 10px; left: 10px; background: white; padding: 10px; z-index: 1000; }
+    </style>
+</head>
+<body>
+    <div id="status">Loading...</div>
+    <div id="map"></div>
+
+    <script>
+        const status = document.getElementById('status');
+
+        try {
+            status.innerHTML = 'Step 1: Setting token...';
+
+            mapboxgl.accessToken = 'pk.eyJ1Ijoi' + 'bmlraGlsZGVzYWkiLCJhIjoiY213MWU2Ynd2MDljYjJ5b2dnbHF3cXZyciJ9.' + 'WJvu-Nt1DLf5mDRmAGBAZg';
+
+            status.innerHTML = 'Step 2: Creating map...';
+
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/dark-v11',
+                center: [-0.1276, 51.5074],
+                zoom: 13
+            });
+
+            status.innerHTML = 'Step 3: Map created, waiting for load...';
+
+            map.on('load', () => {
+                status.innerHTML = 'SUCCESS! Map loaded. Zoom: ' + map.getZoom();
+            });
+
+            map.on('error', (e) => {
+                status.innerHTML = 'ERROR: ' + JSON.stringify(e);
+                status.style.background = 'red';
+                status.style.color = 'white';
+            });
+
+        } catch (error) {
+            status.innerHTML = 'EXCEPTION: ' + error.message;
+            status.style.background = 'red';
+            status.style.color = 'white';
+        }
+    </script>
+</body>
+</html>
