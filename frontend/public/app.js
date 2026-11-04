@@ -44,6 +44,29 @@ try {
         bearing: 0
     });
     console.log('5. Map created successfully');
+
+    // Remove all labels once style loads
+    map.on('style.load', () => {
+        console.log('5.1 Removing labels and darkening map...');
+        const layers = map.getStyle().layers;
+
+        // Remove all text/symbol layers (labels)
+        layers.forEach((layer) => {
+            if (layer.type === 'symbol') {
+                map.removeLayer(layer.id);
+            }
+        });
+
+        // Darken the background and water
+        if (map.getLayer('background')) {
+            map.setPaintProperty('background', 'background-color', '#000000');
+        }
+        if (map.getLayer('water')) {
+            map.setPaintProperty('water', 'fill-color', '#0a0e17');
+        }
+
+        console.log('5.2 Map styling complete');
+    });
 } catch (error) {
     showError('Initialization failed: ' + error.message);
     throw error;
