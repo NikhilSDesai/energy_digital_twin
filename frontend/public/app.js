@@ -2,37 +2,10 @@
 const token = 'pk.eyJ1Ijoi' + 'bmlraGlsZGVzYWkiLCJhIjoiY213MWU2Ynd2MDljYjJ5b2dnbHF3cXZyciJ9.' + 'WJvu-Nt1DLf5mDRmAGBAZg';
 mapboxgl.accessToken = token;
 
-// Initialize map with Dark Matter style (pure black + buildings)
+// Initialize map with Mapbox dark style
 const map = new mapboxgl.Map({
     container: 'map',
-    style: {
-        version: 8,
-        sources: {
-            'mapbox': {
-                type: 'vector',
-                url: 'mapbox://mapbox.mapbox-streets-v8'
-            }
-        },
-        layers: [
-            {
-                id: 'background',
-                type: 'background',
-                paint: {
-                    'background-color': '#000000'
-                }
-            },
-            {
-                id: 'buildings',
-                type: 'fill',
-                source: 'mapbox',
-                'source-layer': 'building',
-                paint: {
-                    'fill-color': '#ffffff',
-                    'fill-opacity': 0.3
-                }
-            }
-        ]
-    },
+    style: 'mapbox://styles/mapbox/dark-v11',
     center: [-2.5, 54.5],
     zoom: 5.8,
     pitch: 0,
