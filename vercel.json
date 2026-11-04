@@ -1,18 +1,7 @@
 {
-  "version": 2,
-  "name": "uk-energy-digital-twin",
-  "builds": [
-    {
-      "src": "frontend/public/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/public/$1"
-    }
-  ],
+  "buildCommand": "echo 'No build needed'",
+  "outputDirectory": "frontend/public",
+  "cleanUrls": true,
   "headers": [
     {
       "source": "/(.*)",
@@ -20,6 +9,10 @@
         {
           "key": "Access-Control-Allow-Origin",
           "value": "*"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
         }
       ]
     }
