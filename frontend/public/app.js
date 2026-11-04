@@ -80,7 +80,7 @@ try {
                     minzoom: 10,
                     paint: {
                         'fill-color': '#1a1a1a',
-                        'fill-opacity': 0.15
+                        'fill-opacity': 0.5
                     }
                 },
                 {
@@ -92,7 +92,7 @@ try {
                     paint: {
                         'line-color': '#1f1f1f',
                         'line-width': 0.5,
-                        'line-opacity': 0.1
+                        'line-opacity': 0.5
                     }
                 }
             ]
