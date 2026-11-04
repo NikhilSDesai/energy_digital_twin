@@ -48,8 +48,8 @@ map.on('load', async function() {
             source: 'transmission',
             paint: {
                 'line-color': '#d4af37',  // Muted gold/yellow
-                'line-width': 2,
-                'line-opacity': 0.7
+                'line-width': 4,
+                'line-opacity': 0.9
             }
         });
 
