@@ -33,40 +33,53 @@ try {
         console.log('3. Using embedded token');
     }
 
-    // Initialize map - very minimal style
+    // Initialize map - pure black minimal style (similar to Carto Dark Matter)
     console.log('4. Creating map...');
     map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/dark-v11',
+        style: {
+            version: 8,
+            sources: {
+                'mapbox': {
+                    type: 'vector',
+                    url: 'mapbox://mapbox.mapbox-streets-v8'
+                }
+            },
+            layers: [
+                {
+                    id: 'background',
+                    type: 'background',
+                    paint: {
+                        'background-color': '#000000'
+                    }
+                },
+                {
+                    id: 'water',
+                    type: 'fill',
+                    source: 'mapbox',
+                    'source-layer': 'water',
+                    paint: {
+                        'fill-color': '#0d0d0d'
+                    }
+                },
+                {
+                    id: 'landcover',
+                    type: 'fill',
+                    source: 'mapbox',
+                    'source-layer': 'landcover',
+                    paint: {
+                        'fill-color': '#0a0a0a',
+                        'fill-opacity': 0.3
+                    }
+                }
+            ]
+        },
         center: [-2.5, 54.5],
         zoom: 5.8,
         pitch: 0,
         bearing: 0
     });
-    console.log('5. Map created successfully');
-
-    // Remove all labels once style loads
-    map.on('style.load', () => {
-        console.log('5.1 Removing labels and darkening map...');
-        const layers = map.getStyle().layers;
-
-        // Remove all text/symbol layers (labels)
-        layers.forEach((layer) => {
-            if (layer.type === 'symbol') {
-                map.removeLayer(layer.id);
-            }
-        });
-
-        // Darken the background and water
-        if (map.getLayer('background')) {
-            map.setPaintProperty('background', 'background-color', '#000000');
-        }
-        if (map.getLayer('water')) {
-            map.setPaintProperty('water', 'fill-color', '#0a0e17');
-        }
-
-        console.log('5.2 Map styling complete');
-    });
+    console.log('5. Map created with black basemap');
 } catch (error) {
     showError('Initialization failed: ' + error.message);
     throw error;
