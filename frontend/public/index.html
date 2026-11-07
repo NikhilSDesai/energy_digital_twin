@@ -70,97 +70,7 @@
             margin-left: 6px;
         }
 
-        /* Left sidebar - minimal */
-        .sidebar {
-            position: absolute;
-            left: 0;
-            top: 60px;
-            bottom: 0;
-            width: 280px;
-            background: rgba(10, 14, 23, 0.85);
-            backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 30px 20px;
-            z-index: 9;
-            overflow-y: auto;
-        }
-
-        .sidebar h3 {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #666;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .layer-toggle {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            margin-bottom: 6px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .layer-toggle:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .layer-toggle.active {
-            background: rgba(102, 126, 234, 0.1);
-            border-color: rgba(102, 126, 234, 0.3);
-        }
-
-        .layer-color {
-            width: 12px;
-            height: 12px;
-            border-radius: 2px;
-            margin-right: 12px;
-        }
-
-        .layer-name {
-            flex: 1;
-            font-size: 13px;
-            color: #e0e0e0;
-        }
-
-        .layer-count {
-            font-size: 11px;
-            color: #666;
-        }
-
-        .divider {
-            height: 1px;
-            background: rgba(255, 255, 255, 0.05);
-            margin: 25px 0;
-        }
-
-        /* Search */
-        .search-box {
-            width: 100%;
-            padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 6px;
-            color: #fff;
-            font-size: 13px;
-            margin-bottom: 20px;
-            outline: none;
-            transition: all 0.2s;
-        }
-
-        .search-box:focus {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(102, 126, 234, 0.5);
-        }
-
-        .search-box::placeholder {
-            color: #666;
-        }
+        /* Sidebar removed - will be redesigned */
 
         /* Bottom info */
         .bottom-info {
@@ -277,64 +187,11 @@
 
     <!-- Top Bar -->
     <div class="top-bar">
-        <div class="logo">UK Energy Grid</div>
+        <div class="logo">UK Energy Grid Digital Twin</div>
         <div class="stats-mini">
-            <div class="stat-mini">Projects<span id="projectCount">2,219</span></div>
-            <div class="stat-mini">Capacity<span>81.7 GW</span></div>
-            <div class="stat-mini">Queue<span>741 GW</span></div>
-        </div>
-    </div>
-
-    <!-- Left Sidebar -->
-    <div class="sidebar">
-        <input type="text" class="search-box" placeholder="Search projects, locations..." id="searchBox">
-
-        <h3>Infrastructure Layers</h3>
-
-        <div class="layer-toggle active" data-layer="gsp-boundaries">
-            <div class="layer-color" style="background: #667eea;"></div>
-            <div class="layer-name">GSP Regions</div>
-            <div class="layer-count">329</div>
-        </div>
-
-        <div class="layer-toggle" data-layer="projects">
-            <div class="layer-color" style="background: #ffd93d;"></div>
-            <div class="layer-name">Connection Queue</div>
-            <div class="layer-count">2,219</div>
-        </div>
-
-        <div class="layer-toggle" data-layer="transmission">
-            <div class="layer-color" style="background: #6bcf7f;"></div>
-            <div class="layer-name">Transmission Lines</div>
-            <div class="layer-count">-</div>
-        </div>
-
-        <div class="divider"></div>
-
-        <h3>Technology Filters</h3>
-
-        <div class="layer-toggle active" data-filter="storage">
-            <div class="layer-color" style="background: #667eea;"></div>
-            <div class="layer-name">Energy Storage</div>
-            <div class="layer-count">744</div>
-        </div>
-
-        <div class="layer-toggle active" data-filter="solar">
-            <div class="layer-color" style="background: #ffd93d;"></div>
-            <div class="layer-name">Solar + Storage</div>
-            <div class="layer-count">443</div>
-        </div>
-
-        <div class="layer-toggle active" data-filter="wind">
-            <div class="layer-color" style="background: #6bcf7f;"></div>
-            <div class="layer-name">Wind</div>
-            <div class="layer-count">459</div>
-        </div>
-
-        <div class="layer-toggle active" data-filter="other">
-            <div class="layer-color" style="background: #999;"></div>
-            <div class="layer-name">Other</div>
-            <div class="layer-count">573</div>
+            <div class="stat-mini">Transmission<span id="transmissionCount">1,212</span></div>
+            <div class="stat-mini">Power Plants<span id="plantsCount">2,587</span></div>
+            <div class="stat-mini">Generation<span>64.4 GW</span></div>
         </div>
     </div>
 
@@ -343,8 +200,8 @@
 
     <!-- Bottom Info -->
     <div class="bottom-info">
-        Data: NESO TEC Register • National Grid ESO Transmission • UK Power Networks Distribution (SE England)<br>
-        <span style="font-size: 10px; color: #555;">Updated Nov 2026 • Zoom in to see distribution network</span>
+        Data: OpenStreetMap • UKPN • NGED • SPEN • Overture Maps • UK Energy Generation Map<br>
+        <span style="font-size: 10px; color: #555;">35% UK Coverage • 5,584 features • Transmission + Distribution + Generation</span>
     </div>
 
     <script src="config.js" onerror="console.log('Config not found')"></script>
