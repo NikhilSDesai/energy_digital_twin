@@ -34,6 +34,7 @@ map.on('load', async function() {
         // Load all data sources
         const [
             transmissionData,
+            osmSubstationsData,
             gspData,
             tecData,
             distribution132Data,
@@ -41,7 +42,8 @@ map.on('load', async function() {
             distribution33Data,
             substationData
         ] = await Promise.all([
-            fetch('/data/transmission_lines.geojson').then(r => r.json()),
+            fetch('/data/osm-transmission-lines-all.geojson').then(r => r.json()), // NEW: OSM data with 1,212 segments
+            fetch('/data/osm-substations.geojson').then(r => r.json()), // NEW: OSM substations (395 sites)
             fetch('/data/gsp_boundaries.geojson').then(r => r.json()),
             fetch('/data/tec_register_points.geojson').then(r => r.json()),
             fetch('/data/ukpn-132kv-overhead-lines.geojson').then(r => r.json()),
@@ -79,7 +81,7 @@ map.on('load', async function() {
 
         console.log('✅ GSP boundaries loaded:', gspData.features.length);
 
-        // Add transmission lines
+        // Add OSM transmission lines (400kV, 275kV, 220kV, DC)
         map.addSource('transmission', {
             type: 'geojson',
             data: transmissionData
@@ -90,18 +92,46 @@ map.on('load', async function() {
             type: 'line',
             source: 'transmission',
             paint: {
-                'line-color': '#d4af37',
+                'line-color': [
+                    'match',
+                    ['get', 'voltage_kv'],
+                    400, '#FFD700',  // Bright gold for 400kV
+                    275, '#FFA500',  // Orange for 275kV
+                    220, '#FF6347',  // Tomato red for 220kV offshore
+                    '#9370DB'        // Purple for DC links
+                ],
                 'line-width': [
                     'interpolate', ['linear'], ['zoom'],
-                    5, ['match', ['get', 'voltage'], '400kV', 2, '275kV', 1.5, 2],
-                    10, ['match', ['get', 'voltage'], '400kV', 4, '275kV', 3, 4],
-                    14, ['match', ['get', 'voltage'], '400kV', 6, '275kV', 4.5, 6]
+                    5, [
+                        'match',
+                        ['get', 'voltage_kv'],
+                        400, 2.5,
+                        275, 2,
+                        220, 1.5,
+                        1.5
+                    ],
+                    10, [
+                        'match',
+                        ['get', 'voltage_kv'],
+                        400, 5,
+                        275, 4,
+                        220, 3,
+                        3
+                    ],
+                    14, [
+                        'match',
+                        ['get', 'voltage_kv'],
+                        400, 7,
+                        275, 5.5,
+                        220, 4,
+                        4
+                    ]
                 ],
-                'line-opacity': 0.9
+                'line-opacity': 0.85
             }
         });
 
-        console.log('✅ Transmission lines loaded:', transmissionData.features.length);
+        console.log('✅ OSM Transmission lines loaded:', transmissionData.features.length, 'segments (400kV, 275kV, 220kV, DC)');
 
         // Add 132kV distribution lines
         map.addSource('distribution-132kv', {
@@ -351,12 +381,41 @@ map.on('load', async function() {
                 'circle-stroke-opacity': 0.6
             }
         });
+        // Add OSM transmission substations (395 major sites)
+        map.addSource('osm-substations', {
+            type: 'geojson',
+            data: osmSubstationsData
+        });
+
+        map.addLayer({
+            id: 'osm-substations',
+            type: 'circle',
+            source: 'osm-substations',
+            minzoom: 6,
+            maxzoom: 24,
+            paint: {
+                'circle-color': '#4CAF50',
+                'circle-radius': [
+                    'interpolate', ['linear'], ['zoom'],
+                    6, 3,
+                    10, 5,
+                    14, 8
+                ],
+                'circle-opacity': 0.7,
+                'circle-stroke-width': 1.5,
+                'circle-stroke-color': '#fff',
+                'circle-stroke-opacity': 0.8
+            }
+        });
+
+        console.log('✅ OSM Substations loaded:', osmSubstationsData.features.length, 'major transmission sites');
         console.log('✅ 132kV distribution loaded:', distribution132Data.features.length);
         console.log('✅ 66kV distribution loaded:', distribution66Data.features.length);
         console.log('✅ 33kV distribution loaded:', distribution33Data.features.length);
-        console.log('✅ Substations loaded:', substationData.features.length);
+        console.log('✅ UKPN Substations loaded:', substationData.features.length);
         console.log('Total features:',
             transmissionData.features.length +
+            osmSubstationsData.features.length +
             gspData.features.length +
             tecData.features.length +
             distribution132Data.features.length +
@@ -435,12 +494,59 @@ map.on('click', 'tec-points', (e) => {
 
 map.on('click', 'transmission-lines', (e) => {
     const props = e.features[0].properties;
+    const voltage = props.voltage_kv || props.voltage || 'Unknown';
+    const voltageColor = voltage == 400 ? '#FFD700' : voltage == 275 ? '#FFA500' : voltage == 220 ? '#FF6347' : '#9370DB';
+
     new mapboxgl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div style="color: #1a1a1a; font-size: 13px;">
-                <strong>${props.name}</strong><br>
-                <span style="color: #666;">${props.voltage}</span>
+            <div style="color: #fff; font-size: 13px; min-width: 200px;">
+                <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: ${voltageColor};">
+                    ${voltage}kV Transmission Line
+                </div>
+                <div style="display: flex; margin-bottom: 4px;">
+                    <span style="color: #666; min-width: 80px;">Voltage</span>
+                    <span style="color: #e0e0e0; font-weight: 500;">${voltage}kV</span>
+                </div>
+                ${props.voltage === 'dc' || props.voltage === 'DC' || voltage > 300 && voltage < 350 ? `
+                <div style="display: flex; margin-bottom: 4px;">
+                    <span style="color: #666; min-width: 80px;">Type</span>
+                    <span style="color: #e0e0e0; font-weight: 500;">HVDC Interconnector</span>
+                </div>
+                ` : ''}
+                <div style="color: #999; font-size: 11px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    National Grid Transmission • OpenStreetMap Data
+                </div>
+            </div>
+        `)
+        .addTo(map);
+});
+
+// OSM Substations popup
+map.on('click', 'osm-substations', (e) => {
+    const props = e.features[0].properties;
+    new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(`
+            <div style="color: #fff; font-size: 13px; min-width: 250px;">
+                <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: #4CAF50;">
+                    ${props.name || 'Transmission Substation'}
+                </div>
+                ${props.capacity_mw ? `
+                <div style="display: flex; margin-bottom: 4px;">
+                    <span style="color: #666; min-width: 100px;">Capacity</span>
+                    <span style="color: #e0e0e0; font-weight: 500;">${props.capacity_mw} MW</span>
+                </div>
+                ` : ''}
+                ${props.operator ? `
+                <div style="display: flex; margin-bottom: 4px;">
+                    <span style="color: #666; min-width: 100px;">Operator</span>
+                    <span style="color: #e0e0e0; font-weight: 500;">${props.operator}</span>
+                </div>
+                ` : ''}
+                <div style="color: #999; font-size: 11px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    Transmission Network • OpenStreetMap Data
+                </div>
             </div>
         `)
         .addTo(map);
@@ -609,6 +715,8 @@ map.on('mouseenter', 'tec-points', () => { map.getCanvas().style.cursor = 'point
 map.on('mouseleave', 'tec-points', () => { map.getCanvas().style.cursor = ''; });
 map.on('mouseenter', 'transmission-lines', () => { map.getCanvas().style.cursor = 'pointer'; });
 map.on('mouseleave', 'transmission-lines', () => { map.getCanvas().style.cursor = ''; });
+map.on('mouseenter', 'osm-substations', () => { map.getCanvas().style.cursor = 'pointer'; });
+map.on('mouseleave', 'osm-substations', () => { map.getCanvas().style.cursor = ''; });
 
 // Distribution lines hover
 ['distribution-132kv-lines', 'distribution-66kv-lines', 'distribution-33kv-lines'].forEach(layerId => {
