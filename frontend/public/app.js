@@ -42,7 +42,8 @@ map.on('load', async function() {
             distribution33Data,
             substationData,
             southWalesPrimaryData,
-            spenBoundaryData
+            spenBoundaryData,
+            powerPlantsData
         ] = await Promise.all([
             fetch('/data/osm-transmission-lines-all.geojson').then(r => r.json()), // NEW: OSM data with 1,212 segments
             fetch('/data/osm-substations.geojson').then(r => r.json()), // NEW: OSM substations (395 sites)
@@ -53,7 +54,8 @@ map.on('load', async function() {
             fetch('/data/ukpn-33kv-overhead-lines.geojson').then(r => r.json()),
             fetch('/data/grid-and-primary-sites.geojson').then(r => r.json()),
             fetch('/data/south_wales_primary.geojson').then(r => r.json()), // NGED South Wales primary substations (195 areas)
-            fetch('/data/spen_boundary.geojson').then(r => r.json()) // SP Energy Networks license areas (SPD + SPM)
+            fetch('/data/spen_boundary.geojson').then(r => r.json()), // SP Energy Networks license areas (SPD + SPM)
+            fetch('/data/uk-power-plants.geojson').then(r => r.json()) // UK power plants: 2,587 sites (wind, solar, gas, etc)
         ]);
 
         // Add GSP boundaries (subtle background layer)
@@ -350,6 +352,99 @@ map.on('load', async function() {
 
         console.log('✅ Connection queue loaded:', tecData.features.length);
 
+        // Add UK power plants with clustering
+        map.addSource('power-plants', {
+            type: 'geojson',
+            data: powerPlantsData,
+            cluster: true,
+            clusterMaxZoom: 9,
+            clusterRadius: 40
+        });
+
+        // Power plant clusters
+        map.addLayer({
+            id: 'power-plants-clusters',
+            type: 'circle',
+            source: 'power-plants',
+            filter: ['has', 'point_count'],
+            minzoom: 5,
+            paint: {
+                'circle-color': [
+                    'step',
+                    ['get', 'point_count'],
+                    '#22c55e', 10,
+                    '#eab308', 50,
+                    '#f97316', 100,
+                    '#ef4444'
+                ],
+                'circle-radius': [
+                    'step',
+                    ['get', 'point_count'],
+                    12, 10,
+                    16, 50,
+                    20, 100,
+                    25
+                ],
+                'circle-opacity': 0.75,
+                'circle-stroke-width': 2,
+                'circle-stroke-color': '#fff',
+                'circle-stroke-opacity': 0.5
+            }
+        });
+
+        // Power plant cluster count labels
+        map.addLayer({
+            id: 'power-plants-cluster-count',
+            type: 'symbol',
+            source: 'power-plants',
+            filter: ['has', 'point_count'],
+            minzoom: 5,
+            layout: {
+                'text-field': '{point_count_abbreviated}',
+                'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                'text-size': 11
+            },
+            paint: {
+                'text-color': '#ffffff'
+            }
+        });
+
+        // Individual power plants
+        map.addLayer({
+            id: 'power-plants-points',
+            type: 'circle',
+            source: 'power-plants',
+            filter: ['!', ['has', 'point_count']],
+            minzoom: 9,
+            paint: {
+                'circle-color': [
+                    'match',
+                    ['get', 'plant_type'],
+                    'wind', '#22c55e',
+                    'offshore_wind', '#06b6d4',
+                    'so', '#facc15',
+                    'gas', '#f97316',
+                    'bio', '#84cc16',
+                    'hy', '#3b82f6',
+                    'bat', '#a855f7',
+                    '#94a3b8'
+                ],
+                'circle-radius': [
+                    'interpolate', ['linear'], ['get', 'capacity_mw'],
+                    0, 3,
+                    50, 5,
+                    500, 8,
+                    2000, 12
+                ],
+                'circle-opacity': 0.75,
+                'circle-stroke-width': 1,
+                'circle-stroke-color': '#fff',
+                'circle-stroke-opacity': 0.8
+            }
+        });
+
+        console.log('✅ Power plants loaded:', powerPlantsData.features.length, 'generation sites');
+
         // Add substations with clustering
         map.addSource('substations', {
             type: 'geojson',
@@ -489,7 +584,8 @@ map.on('load', async function() {
             distribution33Data.features.length +
             substationData.features.length +
             southWalesPrimaryData.features.length +
-            spenBoundaryData.features.length
+            spenBoundaryData.features.length +
+            powerPlantsData.features.length
         );
 
     } catch (error) {
@@ -586,6 +682,49 @@ map.on('click', 'tec-points', (e) => {
                 ${props.capacity_mw > 0 ? `<span style="color: #333;">${props.capacity_mw} MW</span><br>` : ''}
                 <span style="font-size: 11px; color: #888;">${props.connection_site}</span><br>
                 <span style="font-size: 11px; color: #888;">Status: ${props.status}</span>
+            </div>
+        `)
+        .addTo(map);
+});
+
+map.on('click', 'power-plants-clusters', (e) => {
+    const features = map.queryRenderedFeatures(e.point, {
+        layers: ['power-plants-clusters']
+    });
+    const clusterId = features[0].properties.cluster_id;
+    map.getSource('power-plants').getClusterExpansionZoom(clusterId, (err, zoom) => {
+        if (err) return;
+        map.easeTo({
+            center: features[0].geometry.coordinates,
+            zoom: zoom
+        });
+    });
+});
+
+map.on('click', 'power-plants-points', (e) => {
+    const props = e.features[0].properties;
+    const plantTypeNames = {
+        'wind': 'Wind Farm',
+        'offshore_wind': 'Offshore Wind',
+        'so': 'Solar',
+        'gas': 'Natural Gas',
+        'bio': 'Biomass',
+        'hy': 'Hydro',
+        'bat': 'Battery Storage',
+        'ti': 'Tidal'
+    };
+    const plantTypeName = plantTypeNames[props.plant_type] || props.plant_type;
+    const plantColor = props.plant_type === 'wind' ? '#22c55e' : props.plant_type === 'offshore_wind' ? '#06b6d4' : props.plant_type === 'so' ? '#facc15' : props.plant_type === 'gas' ? '#f97316' : '#94a3b8';
+
+    new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(`
+            <div style="color: #1a1a1a; font-size: 12px; max-width: 250px;">
+                <strong>${props.name}</strong><br>
+                <span style="color: ${plantColor}; font-weight: 500;">${plantTypeName}</span><br>
+                ${props.capacity_mw > 0 ? `<span style="color: #333; font-weight: 600;">${props.capacity_mw} MW</span><br>` : ''}
+                ${props.operator ? `<span style="font-size: 11px; color: #888;">${props.operator}</span><br>` : ''}
+                <span style="font-size: 10px; color: #aaa;">OSM: ${props.osm_id}</span>
             </div>
         `)
         .addTo(map);
@@ -816,6 +955,10 @@ map.on('mouseenter', 'tec-clusters', () => { map.getCanvas().style.cursor = 'poi
 map.on('mouseleave', 'tec-clusters', () => { map.getCanvas().style.cursor = ''; });
 map.on('mouseenter', 'tec-points', () => { map.getCanvas().style.cursor = 'pointer'; });
 map.on('mouseleave', 'tec-points', () => { map.getCanvas().style.cursor = ''; });
+map.on('mouseenter', 'power-plants-clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
+map.on('mouseleave', 'power-plants-clusters', () => { map.getCanvas().style.cursor = ''; });
+map.on('mouseenter', 'power-plants-points', () => { map.getCanvas().style.cursor = 'pointer'; });
+map.on('mouseleave', 'power-plants-points', () => { map.getCanvas().style.cursor = ''; });
 map.on('mouseenter', 'transmission-lines', () => { map.getCanvas().style.cursor = 'pointer'; });
 map.on('mouseleave', 'transmission-lines', () => { map.getCanvas().style.cursor = ''; });
 map.on('mouseenter', 'osm-substations', () => { map.getCanvas().style.cursor = 'pointer'; });
