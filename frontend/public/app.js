@@ -40,7 +40,9 @@ map.on('load', async function() {
             distribution132Data,
             distribution66Data,
             distribution33Data,
-            substationData
+            substationData,
+            southWalesPrimaryData,
+            spenBoundaryData
         ] = await Promise.all([
             fetch('/data/osm-transmission-lines-all.geojson').then(r => r.json()), // NEW: OSM data with 1,212 segments
             fetch('/data/osm-substations.geojson').then(r => r.json()), // NEW: OSM substations (395 sites)
@@ -49,7 +51,9 @@ map.on('load', async function() {
             fetch('/data/ukpn-132kv-overhead-lines.geojson').then(r => r.json()),
             fetch('/data/ukpn-66kv-overhead-lines.geojson').then(r => r.json()),
             fetch('/data/ukpn-33kv-overhead-lines.geojson').then(r => r.json()),
-            fetch('/data/grid-and-primary-sites.geojson').then(r => r.json())
+            fetch('/data/grid-and-primary-sites.geojson').then(r => r.json()),
+            fetch('/data/south_wales_primary.geojson').then(r => r.json()), // NGED South Wales primary substations (195 areas)
+            fetch('/data/spen_boundary.geojson').then(r => r.json()) // SP Energy Networks license areas (SPD + SPM)
         ]);
 
         // Add GSP boundaries (subtle background layer)
@@ -80,6 +84,68 @@ map.on('load', async function() {
         });
 
         console.log('✅ GSP boundaries loaded:', gspData.features.length);
+
+        // Add South Wales Primary Substation Areas (NGED data)
+        map.addSource('south-wales-primary', {
+            type: 'geojson',
+            data: southWalesPrimaryData
+        });
+
+        map.addLayer({
+            id: 'south-wales-primary-fill',
+            type: 'fill',
+            source: 'south-wales-primary',
+            minzoom: 8,
+            paint: {
+                'fill-color': '#10b981',
+                'fill-opacity': 0.12
+            }
+        });
+
+        map.addLayer({
+            id: 'south-wales-primary-outline',
+            type: 'line',
+            source: 'south-wales-primary',
+            minzoom: 8,
+            paint: {
+                'line-color': '#10b981',
+                'line-width': 1.5,
+                'line-opacity': 0.5
+            }
+        });
+
+        console.log('✅ South Wales primary substations loaded:', southWalesPrimaryData.features.length, 'service areas');
+
+        // Add SPEN License Area Boundaries
+        map.addSource('spen-boundary', {
+            type: 'geojson',
+            data: spenBoundaryData
+        });
+
+        map.addLayer({
+            id: 'spen-boundary-fill',
+            type: 'fill',
+            source: 'spen-boundary',
+            minzoom: 5,
+            paint: {
+                'fill-color': '#8b5cf6',
+                'fill-opacity': 0.08
+            }
+        });
+
+        map.addLayer({
+            id: 'spen-boundary-outline',
+            type: 'line',
+            source: 'spen-boundary',
+            minzoom: 5,
+            paint: {
+                'line-color': '#8b5cf6',
+                'line-width': 2,
+                'line-opacity': 0.4
+            }
+        });
+
+        console.log('✅ SPEN license areas loaded:', spenBoundaryData.features.length, 'regions (SPD + SPM)');
 
         // Add OSM transmission lines (400kV, 275kV, 220kV, DC)
         map.addSource('transmission', {
@@ -421,7 +487,9 @@ map.on('load', async function() {
             distribution132Data.features.length +
             distribution66Data.features.length +
             distribution33Data.features.length +
-            substationData.features.length
+            substationData.features.length +
+            southWalesPrimaryData.features.length +
+            spenBoundaryData.features.length
         );
 
     } catch (error) {
@@ -457,6 +525,37 @@ map.on('click', 'gsp-fill', (e) => {
             <div style="color: #1a1a1a; font-size: 13px;">
                 <strong>${props.RegionName}</strong><br>
                 <span style="color: #666; font-size: 11px;">GSP Region ${props.RegionID}</span>
+            </div>
+        `)
+        .addTo(map);
+});
+
+map.on('click', 'south-wales-primary-fill', (e) => {
+    const props = e.features[0].properties;
+    new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(`
+            <div style="color: #1a1a1a; font-size: 13px;">
+                <strong>Primary Substation ${props.PRIM_NR}</strong><br>
+                <span style="color: #666; font-size: 11px;">ESA: ${props.ESA}</span><br>
+                <span style="color: #666; font-size: 11px;">BSP: ${props.BSP_NRID_NAME}</span><br>
+                <span style="color: #666; font-size: 11px;">GSP: ${props.GSP_NRID_NAME}</span><br>
+                <span style="color: #10b981; font-size: 11px; font-weight: 500;">NGED - ${props.licence_area}</span>
+            </div>
+        `)
+        .addTo(map);
+});
+
+map.on('click', 'spen-boundary-fill', (e) => {
+    const props = e.features[0].properties;
+    const areaName = props.license_area === 'SPD' ? 'SP Distribution (Central & South Scotland)' : 'SP Manweb (Merseyside, Cheshire, North Wales)';
+    new mapboxgl.Popup()
+        .setLngLat(e.lngLat)
+        .setHTML(`
+            <div style="color: #1a1a1a; font-size: 13px;">
+                <strong>${areaName}</strong><br>
+                <span style="color: #666; font-size: 11px;">License Area: ${props.license_area}</span><br>
+                <span style="color: #8b5cf6; font-size: 11px; font-weight: 500;">SP Energy Networks</span>
             </div>
         `)
         .addTo(map);
@@ -709,6 +808,10 @@ map.on('click', 'substations-points', (e) => {
 // Change cursor on hover
 map.on('mouseenter', 'gsp-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
 map.on('mouseleave', 'gsp-fill', () => { map.getCanvas().style.cursor = ''; });
+map.on('mouseenter', 'south-wales-primary-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
+map.on('mouseleave', 'south-wales-primary-fill', () => { map.getCanvas().style.cursor = ''; });
+map.on('mouseenter', 'spen-boundary-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
+map.on('mouseleave', 'spen-boundary-fill', () => { map.getCanvas().style.cursor = ''; });
 map.on('mouseenter', 'tec-clusters', () => { map.getCanvas().style.cursor = 'pointer'; });
 map.on('mouseleave', 'tec-clusters', () => { map.getCanvas().style.cursor = ''; });
 map.on('mouseenter', 'tec-points', () => { map.getCanvas().style.cursor = 'pointer'; });
