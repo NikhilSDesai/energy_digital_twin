@@ -592,6 +592,9 @@ map.on('load', async function() {
         console.error('Error loading data:', error);
     }
 
+    // Initialize sidebar controls
+    initializeSidebar();
+
     // Hide loading screen
     const loading = document.getElementById('loading');
     if (loading) {
@@ -987,3 +990,60 @@ document.addEventListener('keydown', (e) => {
         });
     }
 });
+
+// Initialize sidebar functionality
+function initializeSidebar() {
+    // Layer mapping: data-layer attribute -> Mapbox layer IDs
+    const layerMapping = {
+        'transmission-400kv': ['transmission-lines'], // Will use filter
+        'transmission-275kv': ['transmission-lines'], // Will use filter
+        'transmission-220kv': ['transmission-lines'], // Will use filter
+        'transmission-dc': ['transmission-lines'], // Will use filter
+        'osm-substations': ['osm-substations'],
+        'distribution-132kv': ['distribution-132kv-lines'],
+        'distribution-66kv': ['distribution-66kv-lines'],
+        'distribution-33kv': ['distribution-33kv-lines'],
+        'power-plants': ['power-plants-clusters', 'power-plants-cluster-count', 'power-plants-points'],
+        'tec-register': ['tec-clusters', 'tec-cluster-count', 'tec-points'],
+        'ukpn-substations': ['substations-clusters', 'substations-cluster-count', 'substations-points'],
+        'gsp-boundaries': ['gsp-fill', 'gsp-outline'],
+        'south-wales-primary': ['south-wales-primary-fill', 'south-wales-primary-outline'],
+        'spen-boundary': ['spen-boundary-fill', 'spen-boundary-outline']
+    };
+
+    // Category expand/collapse
+    document.querySelectorAll('.category-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const category = header.closest('.category');
+            category.classList.toggle('expanded');
+        });
+    });
+
+    // Layer visibility toggle
+    document.querySelectorAll('.layer-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const checkbox = item.querySelector('.layer-checkbox');
+            const layerKey = item.dataset.layer;
+            const mapboxLayers = layerMapping[layerKey];
+
+            if (!mapboxLayers) return;
+
+            // Toggle checkbox state
+            checkbox.classList.toggle('checked');
+            const isVisible = checkbox.classList.contains('checked');
+
+            // Toggle Mapbox layers
+            mapboxLayers.forEach(layerId => {
+                if (map.getLayer(layerId)) {
+                    map.setLayoutProperty(
+                        layerId,
+                        'visibility',
+                        isVisible ? 'visible' : 'none'
+                    );
+                }
+            });
+        });
+    });
+
+    console.log('✅ Sidebar initialized');
+}

@@ -27,7 +27,8 @@
             position: absolute;
             top: 0;
             bottom: 0;
-            width: 100%;
+            left: 320px;
+            right: 0;
         }
 
         /* Minimal top bar */
@@ -70,7 +71,139 @@
             margin-left: 6px;
         }
 
-        /* Sidebar removed - will be redesigned */
+        /* Left Sidebar */
+        .sidebar-left {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            bottom: 0;
+            width: 320px;
+            background: rgba(10, 14, 23, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            overflow-y: auto;
+            z-index: 9;
+            padding: 20px 0;
+        }
+
+        .sidebar-left::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-left::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-left::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .category {
+            margin-bottom: 8px;
+        }
+
+        .category-header {
+            padding: 12px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.2s;
+            user-select: none;
+        }
+
+        .category-header:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+
+        .category-icon {
+            font-size: 16px;
+        }
+
+        .category-chevron {
+            font-size: 12px;
+            color: #666;
+            transition: transform 0.2s;
+        }
+
+        .category.expanded .category-chevron {
+            transform: rotate(90deg);
+        }
+
+        .category-content {
+            display: none;
+            padding: 4px 0;
+        }
+
+        .category.expanded .category-content {
+            display: block;
+        }
+
+        .layer-item {
+            padding: 8px 20px 8px 46px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .layer-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .layer-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1.5px solid rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .layer-checkbox.checked {
+            background: #667eea;
+            border-color: #667eea;
+        }
+
+        .layer-checkbox.checked::after {
+            content: '✓';
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .layer-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .layer-label {
+            font-size: 12px;
+            color: #b0b0b0;
+            flex: 1;
+        }
+
+        .layer-count {
+            font-size: 11px;
+            color: #666;
+            font-weight: 500;
+        }
 
         /* Bottom info */
         .bottom-info {
@@ -192,6 +325,171 @@
             <div class="stat-mini">Transmission<span id="transmissionCount">1,212</span></div>
             <div class="stat-mini">Power Plants<span id="plantsCount">2,587</span></div>
             <div class="stat-mini">Generation<span>64.4 GW</span></div>
+        </div>
+    </div>
+
+    <!-- Left Sidebar -->
+    <div class="sidebar-left">
+        <!-- Transmission Category -->
+        <div class="category expanded" data-category="transmission">
+            <div class="category-header">
+                <div class="category-title">
+                    <span class="category-icon">🔌</span>
+                    <span>Transmission</span>
+                </div>
+                <span class="category-chevron">›</span>
+            </div>
+            <div class="category-content">
+                <div class="layer-item" data-layer="transmission-400kv">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #FFD700;"></div>
+                    <div class="layer-label">400kV Lines</div>
+                    <div class="layer-count">—</div>
+                </div>
+                <div class="layer-item" data-layer="transmission-275kv">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #FFA500;"></div>
+                    <div class="layer-label">275kV Lines</div>
+                    <div class="layer-count">—</div>
+                </div>
+                <div class="layer-item" data-layer="transmission-220kv">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #FF6347;"></div>
+                    <div class="layer-label">220kV Lines</div>
+                    <div class="layer-count">—</div>
+                </div>
+                <div class="layer-item" data-layer="transmission-dc">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #9370DB;"></div>
+                    <div class="layer-label">DC Interconnectors</div>
+                    <div class="layer-count">—</div>
+                </div>
+                <div class="layer-item" data-layer="osm-substations">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #4CAF50;"></div>
+                    <div class="layer-label">Transmission Substations</div>
+                    <div class="layer-count">395</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Distribution Category -->
+        <div class="category expanded" data-category="distribution">
+            <div class="category-header">
+                <div class="category-title">
+                    <span class="category-icon">⚡</span>
+                    <span>Distribution</span>
+                </div>
+                <span class="category-chevron">›</span>
+            </div>
+            <div class="category-content">
+                <div class="layer-item" data-layer="distribution-132kv">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #d4af37;"></div>
+                    <div class="layer-label">132kV Lines</div>
+                    <div class="layer-count">—</div>
+                </div>
+                <div class="layer-item" data-layer="distribution-66kv">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #e6c968;"></div>
+                    <div class="layer-label">66kV Lines</div>
+                    <div class="layer-count">—</div>
+                </div>
+                <div class="layer-item" data-layer="distribution-33kv">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #f5e6a8;"></div>
+                    <div class="layer-label">33kV Lines</div>
+                    <div class="layer-count">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operational Generation Category -->
+        <div class="category expanded" data-category="generation">
+            <div class="category-header">
+                <div class="category-title">
+                    <span class="category-icon">🏭</span>
+                    <span>Operational Generation</span>
+                </div>
+                <span class="category-chevron">›</span>
+            </div>
+            <div class="category-content">
+                <div class="layer-item" data-layer="power-plants">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #22c55e;"></div>
+                    <div class="layer-label">All Power Plants</div>
+                    <div class="layer-count">2,587</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connection Queue Category -->
+        <div class="category expanded" data-category="connection-queue">
+            <div class="category-header">
+                <div class="category-title">
+                    <span class="category-icon">📋</span>
+                    <span>Connection Queue</span>
+                </div>
+                <span class="category-chevron">›</span>
+            </div>
+            <div class="category-content">
+                <div class="layer-item" data-layer="tec-register">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #51bbd6;"></div>
+                    <div class="layer-label">TEC Register</div>
+                    <div class="layer-count">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Substations Category -->
+        <div class="category expanded" data-category="substations">
+            <div class="category-header">
+                <div class="category-title">
+                    <span class="category-icon">🏢</span>
+                    <span>Substations</span>
+                </div>
+                <span class="category-chevron">›</span>
+            </div>
+            <div class="category-content">
+                <div class="layer-item" data-layer="ukpn-substations">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #d4af37;"></div>
+                    <div class="layer-label">UKPN Substations</div>
+                    <div class="layer-count">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Network Regions Category -->
+        <div class="category expanded" data-category="regions">
+            <div class="category-header">
+                <div class="category-title">
+                    <span class="category-icon">🗺️</span>
+                    <span>Network Regions</span>
+                </div>
+                <span class="category-chevron">›</span>
+            </div>
+            <div class="category-content">
+                <div class="layer-item" data-layer="gsp-boundaries">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #3b82f6;"></div>
+                    <div class="layer-label">GSP Boundaries</div>
+                    <div class="layer-count">—</div>
+                </div>
+                <div class="layer-item" data-layer="south-wales-primary">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #10b981;"></div>
+                    <div class="layer-label">South Wales Primary</div>
+                    <div class="layer-count">195</div>
+                </div>
+                <div class="layer-item" data-layer="spen-boundary">
+                    <div class="layer-checkbox checked"></div>
+                    <div class="layer-color" style="background: #8b5cf6;"></div>
+                    <div class="layer-label">SPEN License Areas</div>
+                    <div class="layer-count">2</div>
+                </div>
+            </div>
         </div>
     </div>
 
