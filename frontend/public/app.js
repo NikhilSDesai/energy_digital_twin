@@ -569,6 +569,50 @@ map.on('load', async function() {
             }
         });
 
+        // Add UK Buildings vector tiles
+        // NOTE: Requires tile server serving uk_buildings.mbtiles
+        // To serve tiles locally: tileserver-gl uk_buildings.mbtiles
+        // Or use: mbview uk_buildings.mbtiles
+        // For production: deploy to Mapbox/Maptiler or self-host with tileserver-gl
+
+        // Uncomment when tile server is running:
+        /*
+        map.addSource('uk-buildings', {
+            type: 'vector',
+            tiles: ['http://localhost:8080/data/buildings/{z}/{x}/{y}.pbf'],
+            minzoom: 17,
+            maxzoom: 20
+        });
+
+        map.addLayer({
+            id: 'uk-buildings-fill',
+            type: 'fill',
+            source: 'uk-buildings',
+            'source-layer': 'buildings',
+            minzoom: 17,
+            paint: {
+                'fill-color': '#94a3b8',
+                'fill-opacity': 0.3,
+                'fill-outline-color': '#64748b'
+            }
+        });
+
+        map.addLayer({
+            id: 'uk-buildings-outline',
+            type: 'line',
+            source: 'uk-buildings',
+            'source-layer': 'buildings',
+            minzoom: 17,
+            paint: {
+                'line-color': '#64748b',
+                'line-width': 0.5,
+                'line-opacity': 0.5
+            }
+        });
+
+        console.log('✅ Buildings layer added (29.5M footprints)');
+        */
+
         console.log('✅ OSM Substations loaded:', osmSubstationsData.features.length, 'major transmission sites');
         console.log('✅ 132kV distribution loaded:', distribution132Data.features.length);
         console.log('✅ 66kV distribution loaded:', distribution66Data.features.length);
@@ -587,6 +631,7 @@ map.on('load', async function() {
             spenBoundaryData.features.length +
             powerPlantsData.features.length
         );
+        console.log('⚠️  Buildings layer ready but requires tile server (35GB MBTiles at data/processed/buildings_optimized/uk_buildings.mbtiles)');
 
     } catch (error) {
         console.error('Error loading data:', error);
@@ -1008,7 +1053,8 @@ function initializeSidebar() {
         'ukpn-substations': ['substations-clusters', 'substations-cluster-count', 'substations-points'],
         'gsp-boundaries': ['gsp-fill', 'gsp-outline'],
         'south-wales-primary': ['south-wales-primary-fill', 'south-wales-primary-outline'],
-        'spen-boundary': ['spen-boundary-fill', 'spen-boundary-outline']
+        'spen-boundary': ['spen-boundary-fill', 'spen-boundary-outline'],
+        'uk-buildings': ['uk-buildings-fill', 'uk-buildings-outline'] // Requires tile server
     };
 
     // Category expand/collapse
