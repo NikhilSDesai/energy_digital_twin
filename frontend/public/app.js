@@ -68,8 +68,11 @@ map.on('load', async function() {
             id: 'gsp-fill',
             type: 'fill',
             source: 'gsp',
+            layout: {
+                'visibility': 'none'
+            },
             paint: {
-                'fill-color': '#3b82f6',
+                'fill-color': '#00D9FF',
                 'fill-opacity': 0.08
             }
         });
@@ -78,8 +81,11 @@ map.on('load', async function() {
             id: 'gsp-outline',
             type: 'line',
             source: 'gsp',
+            layout: {
+                'visibility': 'none'
+            },
             paint: {
-                'line-color': '#3b82f6',
+                'line-color': '#00D9FF',
                 'line-width': 1,
                 'line-opacity': 0.3
             }
@@ -98,8 +104,11 @@ map.on('load', async function() {
             type: 'fill',
             source: 'south-wales-primary',
             minzoom: 8,
+            layout: {
+                'visibility': 'none'
+            },
             paint: {
-                'fill-color': '#10b981',
+                'fill-color': '#00D9FF',
                 'fill-opacity': 0.12
             }
         });
@@ -109,8 +118,11 @@ map.on('load', async function() {
             type: 'line',
             source: 'south-wales-primary',
             minzoom: 8,
+            layout: {
+                'visibility': 'none'
+            },
             paint: {
-                'line-color': '#10b981',
+                'line-color': '#00D9FF',
                 'line-width': 1.5,
                 'line-opacity': 0.5
             }
@@ -129,8 +141,11 @@ map.on('load', async function() {
             type: 'fill',
             source: 'spen-boundary',
             minzoom: 5,
+            layout: {
+                'visibility': 'none'
+            },
             paint: {
-                'fill-color': '#8b5cf6',
+                'fill-color': '#00D9FF',
                 'fill-opacity': 0.08
             }
         });
@@ -140,8 +155,11 @@ map.on('load', async function() {
             type: 'line',
             source: 'spen-boundary',
             minzoom: 5,
+            layout: {
+                'visibility': 'none'
+            },
             paint: {
-                'line-color': '#8b5cf6',
+                'line-color': '#00D9FF',
                 'line-width': 2,
                 'line-opacity': 0.4
             }
@@ -160,42 +178,35 @@ map.on('load', async function() {
             type: 'line',
             source: 'transmission',
             paint: {
-                'line-color': [
-                    'match',
-                    ['get', 'voltage_kv'],
-                    400, '#FFD700',  // Bright gold for 400kV
-                    275, '#FFA500',  // Orange for 275kV
-                    220, '#FF6347',  // Tomato red for 220kV offshore
-                    '#9370DB'        // Purple for DC links
-                ],
+                'line-color': '#00D9FF',  // Electric blue for all transmission
                 'line-width': [
                     'interpolate', ['linear'], ['zoom'],
                     5, [
                         'match',
                         ['get', 'voltage_kv'],
-                        400, 2.5,
-                        275, 2,
-                        220, 1.5,
-                        1.5
+                        400, 4,      // Thickest for 400kV
+                        275, 3,      // Thick for 275kV
+                        220, 2,      // Medium for 220kV
+                        2            // Medium for DC
                     ],
                     10, [
                         'match',
                         ['get', 'voltage_kv'],
-                        400, 5,
-                        275, 4,
-                        220, 3,
-                        3
+                        400, 6,      // Thickest for 400kV
+                        275, 4.5,    // Thick for 275kV
+                        220, 3,      // Medium for 220kV
+                        3            // Medium for DC
                     ],
                     14, [
                         'match',
                         ['get', 'voltage_kv'],
-                        400, 7,
-                        275, 5.5,
-                        220, 4,
-                        4
+                        400, 8,      // Thickest for 400kV
+                        275, 6,      // Thick for 275kV
+                        220, 4,      // Medium for 220kV
+                        4            // Medium for DC
                     ]
                 ],
-                'line-opacity': 0.85
+                'line-opacity': 0.9
             }
         });
 
@@ -214,14 +225,14 @@ map.on('load', async function() {
             minzoom: 8,
             maxzoom: 24,
             paint: {
-                'line-color': '#d4af37',
+                'line-color': '#00D9FF',
                 'line-width': [
                     'interpolate', ['linear'], ['zoom'],
-                    8, 1.5,
-                    11, 2.5,
-                    14, 4
+                    8, 2.5,
+                    11, 3.5,
+                    14, 5
                 ],
-                'line-opacity': 0.7
+                'line-opacity': 0.8
             }
         });
 
@@ -238,13 +249,13 @@ map.on('load', async function() {
             minzoom: 11,
             maxzoom: 24,
             paint: {
-                'line-color': '#e6c968',
+                'line-color': '#00D9FF',
                 'line-width': [
                     'interpolate', ['linear'], ['zoom'],
-                    11, 1,
-                    14, 2.5
+                    11, 2,
+                    14, 3.5
                 ],
-                'line-opacity': 0.6
+                'line-opacity': 0.75
             }
         });
 
@@ -261,13 +272,13 @@ map.on('load', async function() {
             minzoom: 11.5,
             maxzoom: 24,
             paint: {
-                'line-color': '#f5e6a8',
+                'line-color': '#00D9FF',
                 'line-width': [
                     'interpolate', ['linear'], ['zoom'],
-                    11.5, 0.8,
-                    14, 2
+                    11.5, 1.5,
+                    14, 2.5
                 ],
-                'line-opacity': 0.5
+                'line-opacity': 0.7
             }
         });
 
@@ -286,6 +297,9 @@ map.on('load', async function() {
             type: 'circle',
             source: 'tec',
             filter: ['has', 'point_count'],
+            layout: {
+                'visibility': 'none'
+            },
             paint: {
                 'circle-color': [
                     'step',
@@ -317,6 +331,7 @@ map.on('load', async function() {
             source: 'tec',
             filter: ['has', 'point_count'],
             layout: {
+                'visibility': 'none',
                 'text-field': '{point_count_abbreviated}',
                 'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
                 'text-size': 12
@@ -332,6 +347,9 @@ map.on('load', async function() {
             type: 'circle',
             source: 'tec',
             filter: ['!', ['has', 'point_count']],
+            layout: {
+                'visibility': 'none'
+            },
             paint: {
                 'circle-color': [
                     'match',
@@ -368,6 +386,9 @@ map.on('load', async function() {
             source: 'power-plants',
             filter: ['has', 'point_count'],
             minzoom: 5,
+            layout: {
+                'visibility': 'none'
+            },
             paint: {
                 'circle-color': [
                     'step',
@@ -400,6 +421,7 @@ map.on('load', async function() {
             filter: ['has', 'point_count'],
             minzoom: 5,
             layout: {
+                'visibility': 'none',
                 'text-field': '{point_count_abbreviated}',
                 'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
                 'text-size': 11
@@ -416,6 +438,9 @@ map.on('load', async function() {
             source: 'power-plants',
             filter: ['!', ['has', 'point_count']],
             minzoom: 9,
+            layout: {
+                'visibility': 'none'
+            },
             paint: {
                 'circle-color': [
                     'match',
@@ -462,6 +487,9 @@ map.on('load', async function() {
             filter: ['has', 'point_count'],
             minzoom: 8,
             maxzoom: 24,
+            layout: {
+                'visibility': 'none'
+            },
             paint: {
                 'circle-color': [
                     'step',
@@ -495,6 +523,7 @@ map.on('load', async function() {
             minzoom: 8,
             maxzoom: 24,
             layout: {
+                'visibility': 'none',
                 'text-field': '{point_count_abbreviated}',
                 'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
                 'text-size': 11
@@ -512,6 +541,9 @@ map.on('load', async function() {
             filter: ['!', ['has', 'point_count']],
             minzoom: 8,
             maxzoom: 24,
+            layout: {
+                'visibility': 'none'
+            },
             paint: {
                 'circle-color': [
                     'match',
@@ -554,8 +586,11 @@ map.on('load', async function() {
             source: 'osm-substations',
             minzoom: 6,
             maxzoom: 24,
+            layout: {
+                'visibility': 'none'
+            },
             paint: {
-                'circle-color': '#4CAF50',
+                'circle-color': '#00D9FF',
                 'circle-radius': [
                     'interpolate', ['linear'], ['zoom'],
                     6, 3,
