@@ -570,16 +570,10 @@ map.on('load', async function() {
         });
 
         // Add UK Buildings vector tiles
-        // NOTE: Requires tile server serving uk_buildings.mbtiles
-        // To serve tiles locally: tileserver-gl uk_buildings.mbtiles
-        // Or use: mbview uk_buildings.mbtiles
-        // For production: deploy to Mapbox/Maptiler or self-host with tileserver-gl
-
-        // Uncomment when tile server is running:
-        /*
+        // Tile server running at http://localhost:8080
         map.addSource('uk-buildings', {
             type: 'vector',
-            tiles: ['http://localhost:8080/data/buildings/{z}/{x}/{y}.pbf'],
+            tiles: ['http://localhost:8080/data/uk_buildings/{z}/{x}/{y}.pbf'],
             minzoom: 17,
             maxzoom: 20
         });
@@ -590,10 +584,12 @@ map.on('load', async function() {
             source: 'uk-buildings',
             'source-layer': 'buildings',
             minzoom: 17,
+            layout: {
+                'visibility': 'none' // Start hidden, toggle via sidebar
+            },
             paint: {
                 'fill-color': '#94a3b8',
-                'fill-opacity': 0.3,
-                'fill-outline-color': '#64748b'
+                'fill-opacity': 0.3
             }
         });
 
@@ -603,6 +599,9 @@ map.on('load', async function() {
             source: 'uk-buildings',
             'source-layer': 'buildings',
             minzoom: 17,
+            layout: {
+                'visibility': 'none' // Start hidden, toggle via sidebar
+            },
             paint: {
                 'line-color': '#64748b',
                 'line-width': 0.5,
@@ -611,7 +610,6 @@ map.on('load', async function() {
         });
 
         console.log('✅ Buildings layer added (29.5M footprints)');
-        */
 
         console.log('✅ OSM Substations loaded:', osmSubstationsData.features.length, 'major transmission sites');
         console.log('✅ 132kV distribution loaded:', distribution132Data.features.length);
