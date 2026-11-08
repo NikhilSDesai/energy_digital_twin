@@ -184,26 +184,26 @@ map.on('load', async function() {
                     5, [
                         'match',
                         ['get', 'voltage_kv'],
-                        400, 4,      // Thickest for 400kV
-                        275, 3,      // Thick for 275kV
-                        220, 2,      // Medium for 220kV
-                        2            // Medium for DC
+                        400, 2,      // Thickest for 400kV
+                        275, 1.5,    // Thick for 275kV
+                        220, 1,      // Medium for 220kV
+                        1            // Medium for DC
                     ],
                     10, [
                         'match',
                         ['get', 'voltage_kv'],
-                        400, 6,      // Thickest for 400kV
-                        275, 4.5,    // Thick for 275kV
-                        220, 3,      // Medium for 220kV
-                        3            // Medium for DC
+                        400, 3,      // Thickest for 400kV
+                        275, 2.5,    // Thick for 275kV
+                        220, 2,      // Medium for 220kV
+                        2            // Medium for DC
                     ],
                     14, [
                         'match',
                         ['get', 'voltage_kv'],
-                        400, 8,      // Thickest for 400kV
-                        275, 6,      // Thick for 275kV
-                        220, 4,      // Medium for 220kV
-                        4            // Medium for DC
+                        400, 4,      // Thickest for 400kV
+                        275, 3,      // Thick for 275kV
+                        220, 2.5,    // Medium for 220kV
+                        2.5          // Medium for DC
                     ]
                 ],
                 'line-opacity': 0.9
@@ -228,9 +228,9 @@ map.on('load', async function() {
                 'line-color': '#00D9FF',
                 'line-width': [
                     'interpolate', ['linear'], ['zoom'],
-                    8, 2.5,
-                    11, 3.5,
-                    14, 5
+                    8, 1.5,
+                    11, 2,
+                    14, 2.5
                 ],
                 'line-opacity': 0.8
             }
@@ -252,8 +252,8 @@ map.on('load', async function() {
                 'line-color': '#00D9FF',
                 'line-width': [
                     'interpolate', ['linear'], ['zoom'],
-                    11, 2,
-                    14, 3.5
+                    11, 1,
+                    14, 2
                 ],
                 'line-opacity': 0.75
             }
@@ -275,8 +275,8 @@ map.on('load', async function() {
                 'line-color': '#00D9FF',
                 'line-width': [
                     'interpolate', ['linear'], ['zoom'],
-                    11.5, 1.5,
-                    14, 2.5
+                    11.5, 0.8,
+                    14, 1.5
                 ],
                 'line-opacity': 0.7
             }
