@@ -1036,12 +1036,16 @@ document.addEventListener('keydown', (e) => {
 
 // Initialize sidebar functionality
 function initializeSidebar() {
-    // Layer mapping: data-layer attribute -> Mapbox layer IDs
+    // Track which transmission voltages are visible
+    const transmissionVisibility = {
+        '400': true,
+        '275': true,
+        '220': true,
+        'dc': true
+    };
+
+    // Layer mapping: data-layer attribute -> Mapbox layer IDs or special handling
     const layerMapping = {
-        'transmission-400kv': ['transmission-lines'], // Will use filter
-        'transmission-275kv': ['transmission-lines'], // Will use filter
-        'transmission-220kv': ['transmission-lines'], // Will use filter
-        'transmission-dc': ['transmission-lines'], // Will use filter
         'osm-substations': ['osm-substations'],
         'distribution-132kv': ['distribution-132kv-lines'],
         'distribution-66kv': ['distribution-66kv-lines'],
@@ -1052,8 +1056,26 @@ function initializeSidebar() {
         'gsp-boundaries': ['gsp-fill', 'gsp-outline'],
         'south-wales-primary': ['south-wales-primary-fill', 'south-wales-primary-outline'],
         'spen-boundary': ['spen-boundary-fill', 'spen-boundary-outline'],
-        'uk-buildings': ['uk-buildings-fill', 'uk-buildings-outline'] // Requires tile server
+        'uk-buildings': ['uk-buildings-fill', 'uk-buildings-outline']
     };
+
+    // Update transmission line filter based on visibility settings
+    function updateTransmissionFilter() {
+        const visibleVoltages = [];
+        if (transmissionVisibility['400']) visibleVoltages.push(400);
+        if (transmissionVisibility['275']) visibleVoltages.push(275);
+        if (transmissionVisibility['220']) visibleVoltages.push(220);
+        if (transmissionVisibility['dc']) visibleVoltages.push('dc', 'DC', null); // DC lines might have null or 'dc' values
+
+        if (visibleVoltages.length === 0) {
+            // Hide transmission lines completely
+            map.setLayoutProperty('transmission-lines', 'visibility', 'none');
+        } else {
+            // Show transmission lines with filter
+            map.setLayoutProperty('transmission-lines', 'visibility', 'visible');
+            map.setFilter('transmission-lines', ['in', ['get', 'voltage_kv'], ['literal', visibleVoltages]]);
+        }
+    }
 
     // Category expand/collapse
     document.querySelectorAll('.category-header').forEach(header => {
@@ -1068,26 +1090,41 @@ function initializeSidebar() {
         item.addEventListener('click', () => {
             const checkbox = item.querySelector('.layer-checkbox');
             const layerKey = item.dataset.layer;
-            const mapboxLayers = layerMapping[layerKey];
-
-            if (!mapboxLayers) return;
 
             // Toggle checkbox state
             checkbox.classList.toggle('checked');
             const isVisible = checkbox.classList.contains('checked');
 
-            // Toggle Mapbox layers
-            mapboxLayers.forEach(layerId => {
-                if (map.getLayer(layerId)) {
-                    map.setLayoutProperty(
-                        layerId,
-                        'visibility',
-                        isVisible ? 'visible' : 'none'
-                    );
+            // Handle transmission layers with filtering
+            if (layerKey === 'transmission-400kv') {
+                transmissionVisibility['400'] = isVisible;
+                updateTransmissionFilter();
+            } else if (layerKey === 'transmission-275kv') {
+                transmissionVisibility['275'] = isVisible;
+                updateTransmissionFilter();
+            } else if (layerKey === 'transmission-220kv') {
+                transmissionVisibility['220'] = isVisible;
+                updateTransmissionFilter();
+            } else if (layerKey === 'transmission-dc') {
+                transmissionVisibility['dc'] = isVisible;
+                updateTransmissionFilter();
+            } else {
+                // Handle regular layers
+                const mapboxLayers = layerMapping[layerKey];
+                if (mapboxLayers) {
+                    mapboxLayers.forEach(layerId => {
+                        if (map.getLayer(layerId)) {
+                            map.setLayoutProperty(
+                                layerId,
+                                'visibility',
+                                isVisible ? 'visible' : 'none'
+                            );
+                        }
+                    });
                 }
-            });
+            }
         });
     });
 
-    console.log('✅ Sidebar initialized');
+    console.log('✅ Sidebar initialized with filtering support');
 }
