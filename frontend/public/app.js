@@ -221,7 +221,8 @@ map.on('load', async function() {
                         2.5          // Medium for DC
                     ]
                 ],
-                'line-opacity': 0.9
+                'line-opacity': 0.9,
+                'line-blur': 1.5  // Subtle glow effect
             }
         });
 
@@ -247,7 +248,8 @@ map.on('load', async function() {
                     11, 2,
                     14, 2.5
                 ],
-                'line-opacity': 0.8
+                'line-opacity': 0.8,
+                'line-blur': 1.5  // Subtle glow effect
             }
         });
 
@@ -270,7 +272,8 @@ map.on('load', async function() {
                     11, 1,
                     14, 2
                 ],
-                'line-opacity': 0.75
+                'line-opacity': 0.75,
+                'line-blur': 1.5  // Subtle glow effect
             }
         });
 
@@ -293,7 +296,8 @@ map.on('load', async function() {
                     11.5, 0.8,
                     14, 1.5
                 ],
-                'line-opacity': 0.7
+                'line-opacity': 0.7,
+                'line-blur': 1.5  // Subtle glow effect
             }
         });
 
