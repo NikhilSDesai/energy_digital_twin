@@ -222,7 +222,12 @@ map.on('load', async function() {
                     ]
                 ],
                 'line-opacity': 0.9,
-                'line-blur': 1.5  // Subtle glow effect
+                'line-blur': [
+                    'interpolate', ['linear'], ['zoom'],
+                    5, 2,      // More blur at lower zoom for visibility
+                    10, 2.5,   // Increase blur at mid zoom
+                    14, 3      // Maximum blur at higher zoom
+                ]
             }
         });
 
@@ -249,7 +254,12 @@ map.on('load', async function() {
                     14, 2.5
                 ],
                 'line-opacity': 0.8,
-                'line-blur': 1.5  // Subtle glow effect
+                'line-blur': [
+                    'interpolate', ['linear'], ['zoom'],
+                    8, 2,
+                    11, 2.5,
+                    14, 3
+                ]
             }
         });
 
@@ -273,7 +283,11 @@ map.on('load', async function() {
                     14, 2
                 ],
                 'line-opacity': 0.75,
-                'line-blur': 1.5  // Subtle glow effect
+                'line-blur': [
+                    'interpolate', ['linear'], ['zoom'],
+                    11, 2,
+                    14, 3
+                ]
             }
         });
 
@@ -297,7 +311,11 @@ map.on('load', async function() {
                     14, 1.5
                 ],
                 'line-opacity': 0.7,
-                'line-blur': 1.5  // Subtle glow effect
+                'line-blur': [
+                    'interpolate', ['linear'], ['zoom'],
+                    11.5, 2,
+                    14, 3
+                ]
             }
         });
 
