@@ -22,6 +22,29 @@ console.log('Map initializing with style:', 'https://api.maptiler.com/maps/backd
 // Hide loading screen and add data layers when map loads
 map.on('load', async function() {
     console.log('✅ Map loaded successfully!');
+
+    // Remove labels and borders from MapTiler basemap
+    const style = map.getStyle();
+    if (style && style.layers) {
+        style.layers.forEach(layer => {
+            const layerId = layer.id.toLowerCase();
+            // Remove labels (symbol layers and layers with 'label', 'text', 'place' in name)
+            if (layer.type === 'symbol' ||
+                layerId.includes('label') ||
+                layerId.includes('text') ||
+                layerId.includes('place') ||
+                layerId.includes('poi')) {
+                map.removeLayer(layer.id);
+            }
+            // Remove borders (boundary, border, admin layers)
+            else if (layerId.includes('boundary') ||
+                     layerId.includes('border') ||
+                     layerId.includes('admin')) {
+                map.removeLayer(layer.id);
+            }
+        });
+    }
+
     try {
         // Load all data sources
         const [
