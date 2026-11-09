@@ -945,27 +945,11 @@ map.on('click', 'transmission-boundaries', (e) => {
     new maplibregl.Popup({ className: 'custom-popup' })
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div class="popup-title">${props.name}</div>
+            <div class="popup-title">Boundary ${props.Boundary_n}</div>
             <div class="popup-row">
-                <span class="popup-label">Boundary ID</span>
-                <span class="popup-value">${props.boundary_id}</span>
+                <span class="popup-label">NESO ID</span>
+                <span class="popup-value">${props.ID}</span>
             </div>
-            <div class="popup-row">
-                <span class="popup-label">Description</span>
-                <span class="popup-value">${props.description}</span>
-            </div>
-            ${props.typical_capacity_gw ? `
-            <div class="popup-row">
-                <span class="popup-label">Capacity</span>
-                <span class="popup-value">${props.typical_capacity_gw} GW</span>
-            </div>
-            ` : ''}
-            ${props.annual_constraint_cost_gbp ? `
-            <div class="popup-row">
-                <span class="popup-label">Annual Cost</span>
-                <span class="popup-value">£${(props.annual_constraint_cost_gbp / 1000000).toFixed(0)}M</span>
-            </div>
-            ` : ''}
         `)
         .addTo(map);
 });
