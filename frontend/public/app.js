@@ -884,29 +884,22 @@ map.on('click', 'transmission-lines', (e) => {
 // OSM Substations popup
 map.on('click', 'osm-substations', (e) => {
     const props = e.features[0].properties;
-    new maplibregl.Popup()
+    new maplibregl.Popup({ className: 'custom-popup' })
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div style="color: #fff; font-size: 13px; min-width: 250px;">
-                <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: #4CAF50;">
-                    ${props.name || 'Transmission Substation'}
-                </div>
-                ${props.capacity_mw ? `
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 100px;">Capacity</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">${props.capacity_mw} MW</span>
-                </div>
-                ` : ''}
-                ${props.operator ? `
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 100px;">Operator</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">${props.operator}</span>
-                </div>
-                ` : ''}
-                <div style="color: #999; font-size: 11px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
-                    Transmission Network • OpenStreetMap Data
-                </div>
+            <div class="popup-title">${props.name || 'Transmission Substation'}</div>
+            ${props.capacity_mw ? `
+            <div class="popup-row">
+                <span class="popup-label">Capacity</span>
+                <span class="popup-value">${props.capacity_mw} MW</span>
             </div>
+            ` : ''}
+            ${props.operator ? `
+            <div class="popup-row">
+                <span class="popup-label">Operator</span>
+                <span class="popup-value">${props.operator}</span>
+            </div>
+            ` : ''}
         `)
         .addTo(map);
 });
