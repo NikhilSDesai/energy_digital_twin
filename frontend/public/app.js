@@ -16,17 +16,6 @@ map.addControl(new mapboxgl.NavigationControl({
     showCompass: false
 }), 'top-right');
 
-// Remove all labels when style loads
-map.on('style.load', function() {
-    const layers = map.getStyle().layers;
-    // Remove all symbol layers (text labels)
-    layers.forEach(layer => {
-        if (layer.type === 'symbol') {
-            map.removeLayer(layer.id);
-        }
-    });
-});
-
 // Hide loading screen and add data layers when map loads
 map.on('load', async function() {
     try {
