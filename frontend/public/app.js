@@ -736,12 +736,13 @@ console.log('Press R to reset view, use mouse/trackpad to navigate');
 // Add interactivity - popups on click
 map.on('click', 'gsp-fill', (e) => {
     const props = e.features[0].properties;
-    new maplibregl.Popup()
+    new maplibregl.Popup({ className: 'custom-popup' })
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div style="color: #1a1a1a; font-size: 13px;">
-                <strong>${props.RegionName}</strong><br>
-                <span style="color: #666; font-size: 11px;">GSP Region ${props.RegionID}</span>
+            <div class="popup-title">${props.RegionName}</div>
+            <div class="popup-row">
+                <span class="popup-label">Region ID</span>
+                <span class="popup-value">${props.RegionID}</span>
             </div>
         `)
         .addTo(map);
@@ -749,15 +750,21 @@ map.on('click', 'gsp-fill', (e) => {
 
 map.on('click', 'south-wales-primary-fill', (e) => {
     const props = e.features[0].properties;
-    new maplibregl.Popup()
+    new maplibregl.Popup({ className: 'custom-popup' })
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div style="color: #1a1a1a; font-size: 13px;">
-                <strong>Primary Substation ${props.PRIM_NR}</strong><br>
-                <span style="color: #666; font-size: 11px;">ESA: ${props.ESA}</span><br>
-                <span style="color: #666; font-size: 11px;">BSP: ${props.BSP_NRID_NAME}</span><br>
-                <span style="color: #666; font-size: 11px;">GSP: ${props.GSP_NRID_NAME}</span><br>
-                <span style="color: #10b981; font-size: 11px; font-weight: 500;">NGED - ${props.licence_area}</span>
+            <div class="popup-title">Primary Substation ${props.PRIM_NR}</div>
+            <div class="popup-row">
+                <span class="popup-label">ESA</span>
+                <span class="popup-value">${props.ESA}</span>
+            </div>
+            <div class="popup-row">
+                <span class="popup-label">BSP</span>
+                <span class="popup-value">${props.BSP_NRID_NAME}</span>
+            </div>
+            <div class="popup-row">
+                <span class="popup-label">GSP</span>
+                <span class="popup-value">${props.GSP_NRID_NAME}</span>
             </div>
         `)
         .addTo(map);
@@ -766,13 +773,17 @@ map.on('click', 'south-wales-primary-fill', (e) => {
 map.on('click', 'spen-boundary-fill', (e) => {
     const props = e.features[0].properties;
     const areaName = props.license_area === 'SPD' ? 'SP Distribution (Central & South Scotland)' : 'SP Manweb (Merseyside, Cheshire, North Wales)';
-    new maplibregl.Popup()
+    new maplibregl.Popup({ className: 'custom-popup' })
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div style="color: #1a1a1a; font-size: 13px;">
-                <strong>${areaName}</strong><br>
-                <span style="color: #666; font-size: 11px;">License Area: ${props.license_area}</span><br>
-                <span style="color: #8b5cf6; font-size: 11px; font-weight: 500;">SP Energy Networks</span>
+            <div class="popup-title">${areaName}</div>
+            <div class="popup-row">
+                <span class="popup-label">License Area</span>
+                <span class="popup-value">${props.license_area}</span>
+            </div>
+            <div class="popup-row">
+                <span class="popup-label">Operator</span>
+                <span class="popup-value">SP Energy Networks</span>
             </div>
         `)
         .addTo(map);
@@ -794,15 +805,27 @@ map.on('click', 'tec-clusters', (e) => {
 
 map.on('click', 'tec-points', (e) => {
     const props = e.features[0].properties;
-    new maplibregl.Popup()
+    new maplibregl.Popup({ className: 'custom-popup' })
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div style="color: #1a1a1a; font-size: 12px; max-width: 250px;">
-                <strong>${props.project_name}</strong><br>
-                <span style="color: #666;">${props.plant_type}</span><br>
-                ${props.capacity_mw > 0 ? `<span style="color: #333;">${props.capacity_mw} MW</span><br>` : ''}
-                <span style="font-size: 11px; color: #888;">${props.connection_site}</span><br>
-                <span style="font-size: 11px; color: #888;">Status: ${props.status}</span>
+            <div class="popup-title">${props.project_name}</div>
+            <div class="popup-row">
+                <span class="popup-label">Type</span>
+                <span class="popup-value">${props.plant_type}</span>
+            </div>
+            ${props.capacity_mw > 0 ? `
+            <div class="popup-row">
+                <span class="popup-label">Capacity</span>
+                <span class="popup-value">${props.capacity_mw} MW</span>
+            </div>
+            ` : ''}
+            <div class="popup-row">
+                <span class="popup-label">Connection</span>
+                <span class="popup-value">${props.connection_site}</span>
+            </div>
+            <div class="popup-row">
+                <span class="popup-label">Status</span>
+                <span class="popup-value">${props.status}</span>
             </div>
         `)
         .addTo(map);
@@ -835,18 +858,27 @@ map.on('click', 'power-plants-points', (e) => {
         'ti': 'Tidal'
     };
     const plantTypeName = plantTypeNames[props.plant_type] || props.plant_type;
-    const plantColor = props.plant_type === 'wind' ? '#22c55e' : props.plant_type === 'offshore_wind' ? '#06b6d4' : props.plant_type === 'so' ? '#facc15' : props.plant_type === 'gas' ? '#f97316' : '#94a3b8';
 
-    new maplibregl.Popup()
+    new maplibregl.Popup({ className: 'custom-popup' })
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div style="color: #1a1a1a; font-size: 12px; max-width: 250px;">
-                <strong>${props.name}</strong><br>
-                <span style="color: ${plantColor}; font-weight: 500;">${plantTypeName}</span><br>
-                ${props.capacity_mw > 0 ? `<span style="color: #333; font-weight: 600;">${props.capacity_mw} MW</span><br>` : ''}
-                ${props.operator ? `<span style="font-size: 11px; color: #888;">${props.operator}</span><br>` : ''}
-                <span style="font-size: 10px; color: #aaa;">OSM: ${props.osm_id}</span>
+            <div class="popup-title">${props.name}</div>
+            <div class="popup-row">
+                <span class="popup-label">Type</span>
+                <span class="popup-value">${plantTypeName}</span>
             </div>
+            ${props.capacity_mw > 0 ? `
+            <div class="popup-row">
+                <span class="popup-label">Capacity</span>
+                <span class="popup-value">${props.capacity_mw} MW</span>
+            </div>
+            ` : ''}
+            ${props.operator ? `
+            <div class="popup-row">
+                <span class="popup-label">Operator</span>
+                <span class="popup-value">${props.operator}</span>
+            </div>
+            ` : ''}
         `)
         .addTo(map);
 });
@@ -854,29 +886,21 @@ map.on('click', 'power-plants-points', (e) => {
 map.on('click', 'transmission-lines', (e) => {
     const props = e.features[0].properties;
     const voltage = props.voltage_kv || props.voltage || 'Unknown';
-    const voltageColor = voltage == 400 ? '#FFD700' : voltage == 275 ? '#FFA500' : voltage == 220 ? '#FF6347' : '#9370DB';
 
-    new maplibregl.Popup()
+    new maplibregl.Popup({ className: 'custom-popup' })
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div style="color: #fff; font-size: 13px; min-width: 200px;">
-                <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: ${voltageColor};">
-                    ${voltage}kV Transmission Line
-                </div>
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 80px;">Voltage</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">${voltage}kV</span>
-                </div>
-                ${props.voltage === 'dc' || props.voltage === 'DC' || voltage > 300 && voltage < 350 ? `
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 80px;">Type</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">HVDC Interconnector</span>
-                </div>
-                ` : ''}
-                <div style="color: #999; font-size: 11px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
-                    National Grid Transmission • OpenStreetMap Data
-                </div>
+            <div class="popup-title">${voltage}kV Transmission Line</div>
+            <div class="popup-row">
+                <span class="popup-label">Voltage</span>
+                <span class="popup-value">${voltage}kV</span>
             </div>
+            ${props.voltage === 'dc' || props.voltage === 'DC' || voltage > 300 && voltage < 350 ? `
+            <div class="popup-row">
+                <span class="popup-label">Type</span>
+                <span class="popup-value">HVDC Interconnector</span>
+            </div>
+            ` : ''}
         `)
         .addTo(map);
 });
@@ -907,93 +931,72 @@ map.on('click', 'osm-substations', (e) => {
 // Distribution line popups
 map.on('click', 'distribution-132kv-lines', (e) => {
     const props = e.features[0].properties;
-    new maplibregl.Popup()
+    new maplibregl.Popup({ className: 'custom-popup' })
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div style="color: #fff; font-size: 13px; min-width: 200px;">
-                <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: #d4af37;">
-                    132kV Distribution Line
-                </div>
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 80px;">Voltage</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">132kV</span>
-                </div>
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 80px;">DNO</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">${props.dno === 'SPN' ? 'South East (SPN)' : props.dno === 'EPN' ? 'East England (EPN)' : 'London (LPN)'}</span>
-                </div>
-                ${props.local_authority ? `
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 80px;">Authority</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">${props.local_authority}</span>
-                </div>
-                ` : ''}
-                <div style="color: #999; font-size: 11px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
-                    UK Power Networks Distribution
-                </div>
+            <div class="popup-title">132kV Distribution Line</div>
+            <div class="popup-row">
+                <span class="popup-label">Voltage</span>
+                <span class="popup-value">132kV</span>
             </div>
+            <div class="popup-row">
+                <span class="popup-label">DNO</span>
+                <span class="popup-value">${props.dno === 'SPN' ? 'South East (SPN)' : props.dno === 'EPN' ? 'East England (EPN)' : 'London (LPN)'}</span>
+            </div>
+            ${props.local_authority ? `
+            <div class="popup-row">
+                <span class="popup-label">Authority</span>
+                <span class="popup-value">${props.local_authority}</span>
+            </div>
+            ` : ''}
         `)
         .addTo(map);
 });
 
 map.on('click', 'distribution-66kv-lines', (e) => {
     const props = e.features[0].properties;
-    new maplibregl.Popup()
+    new maplibregl.Popup({ className: 'custom-popup' })
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div style="color: #fff; font-size: 13px; min-width: 200px;">
-                <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: #e6c968;">
-                    66kV Distribution Line
-                </div>
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 80px;">Voltage</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">66kV</span>
-                </div>
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 80px;">DNO</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">${props.dno === 'SPN' ? 'South East (SPN)' : props.dno === 'EPN' ? 'East England (EPN)' : 'London (LPN)'}</span>
-                </div>
-                ${props.local_authority ? `
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 80px;">Authority</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">${props.local_authority}</span>
-                </div>
-                ` : ''}
-                <div style="color: #999; font-size: 11px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
-                    UK Power Networks Distribution
-                </div>
+            <div class="popup-title">66kV Distribution Line</div>
+            <div class="popup-row">
+                <span class="popup-label">Voltage</span>
+                <span class="popup-value">66kV</span>
             </div>
+            <div class="popup-row">
+                <span class="popup-label">DNO</span>
+                <span class="popup-value">${props.dno === 'SPN' ? 'South East (SPN)' : props.dno === 'EPN' ? 'East England (EPN)' : 'London (LPN)'}</span>
+            </div>
+            ${props.local_authority ? `
+            <div class="popup-row">
+                <span class="popup-label">Authority</span>
+                <span class="popup-value">${props.local_authority}</span>
+            </div>
+            ` : ''}
         `)
         .addTo(map);
 });
 
 map.on('click', 'distribution-33kv-lines', (e) => {
     const props = e.features[0].properties;
-    new maplibregl.Popup()
+    new maplibregl.Popup({ className: 'custom-popup' })
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div style="color: #fff; font-size: 13px; min-width: 200px;">
-                <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: #f5e6a8;">
-                    33kV Distribution Line
-                </div>
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 80px;">Voltage</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">33kV</span>
-                </div>
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 80px;">DNO</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">${props.dno === 'SPN' ? 'South East (SPN)' : props.dno === 'EPN' ? 'East England (EPN)' : 'London (LPN)'}</span>
-                </div>
-                ${props.local_authority ? `
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 80px;">Authority</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">${props.local_authority}</span>
-                </div>
-                ` : ''}
-                <div style="color: #999; font-size: 11px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
-                    UK Power Networks Distribution
-                </div>
+            <div class="popup-title">33kV Distribution Line</div>
+            <div class="popup-row">
+                <span class="popup-label">Voltage</span>
+                <span class="popup-value">33kV</span>
             </div>
+            <div class="popup-row">
+                <span class="popup-label">DNO</span>
+                <span class="popup-value">${props.dno === 'SPN' ? 'South East (SPN)' : props.dno === 'EPN' ? 'East England (EPN)' : 'London (LPN)'}</span>
+            </div>
+            ${props.local_authority ? `
+            <div class="popup-row">
+                <span class="popup-label">Authority</span>
+                <span class="popup-value">${props.local_authority}</span>
+            </div>
+            ` : ''}
         `)
         .addTo(map);
 });
@@ -1015,45 +1018,36 @@ map.on('click', 'substations-clusters', (e) => {
 
 map.on('click', 'substations-points', (e) => {
     const props = e.features[0].properties;
-    new maplibregl.Popup()
+    new maplibregl.Popup({ className: 'custom-popup' })
         .setLngLat(e.lngLat)
         .setHTML(`
-            <div style="color: #fff; font-size: 13px; min-width: 250px;">
-                <div style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: #d4af37;">
-                    ${props.sitename}
-                </div>
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 100px;">Type</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">${props.sitetype}</span>
-                </div>
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 100px;">Voltage</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">${props.sitevoltage}kV</span>
-                </div>
-                ${props.maxdemandwinter ? `
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 100px;">Max Demand</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">${props.maxdemandwinter} MW</span>
-                </div>
-                ` : ''}
-                ${props.siteclassification ? `
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 100px;">Classification</span>
-                    <span style="color: ${props.siteclassification === 'HOT' ? '#e15554' : '#48dbfb'}; font-weight: 500;">${props.siteclassification}</span>
-                </div>
-                ` : ''}
-                ${props.towncity ? `
-                <div style="display: flex; margin-bottom: 4px;">
-                    <span style="color: #666; min-width: 100px;">Location</span>
-                    <span style="color: #e0e0e0; font-weight: 500;">${props.towncity}${props.county ? ', ' + props.county : ''}</span>
-                </div>
-                ` : ''}
-                ${props.licencearea ? `
-                <div style="color: #999; font-size: 11px; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
-                    ${props.licencearea}
-                </div>
-                ` : ''}
+            <div class="popup-title">${props.sitename}</div>
+            <div class="popup-row">
+                <span class="popup-label">Type</span>
+                <span class="popup-value">${props.sitetype}</span>
             </div>
+            <div class="popup-row">
+                <span class="popup-label">Voltage</span>
+                <span class="popup-value">${props.sitevoltage}kV</span>
+            </div>
+            ${props.maxdemandwinter ? `
+            <div class="popup-row">
+                <span class="popup-label">Max Demand</span>
+                <span class="popup-value">${props.maxdemandwinter} MW</span>
+            </div>
+            ` : ''}
+            ${props.siteclassification ? `
+            <div class="popup-row">
+                <span class="popup-label">Classification</span>
+                <span class="popup-value">${props.siteclassification}</span>
+            </div>
+            ` : ''}
+            ${props.towncity ? `
+            <div class="popup-row">
+                <span class="popup-label">Location</span>
+                <span class="popup-value">${props.towncity}${props.county ? ', ' + props.county : ''}</span>
+            </div>
+            ` : ''}
         `)
         .addTo(map);
 });
