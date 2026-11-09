@@ -58,7 +58,8 @@ map.on('load', async function() {
             substationData,
             southWalesPrimaryData,
             spenBoundaryData,
-            powerPlantsData
+            powerPlantsData,
+            transmissionBoundariesData
         ] = await Promise.all([
             fetch('/data/osm-transmission-lines-all.geojson').then(r => r.json()), // NEW: OSM data with 1,212 segments
             fetch('/data/osm-substations.geojson').then(r => r.json()), // NEW: OSM substations (395 sites)
@@ -70,7 +71,8 @@ map.on('load', async function() {
             fetch('/data/grid-and-primary-sites.geojson').then(r => r.json()),
             fetch('/data/south_wales_primary.geojson').then(r => r.json()), // NGED South Wales primary substations (195 areas)
             fetch('/data/spen_boundary.geojson').then(r => r.json()), // SP Energy Networks license areas (SPD + SPM)
-            fetch('/data/uk-power-plants.geojson').then(r => r.json()) // UK power plants: 2,587 sites (wind, solar, gas, etc)
+            fetch('/data/uk-power-plants.geojson').then(r => r.json()), // UK power plants: 2,587 sites (wind, solar, gas, etc)
+            fetch('/data/transmission_boundaries.geojson').then(r => r.json()) // Transmission constraint boundaries (B6, B7, B8, etc)
         ]);
 
         // Add GSP boundaries (subtle background layer)
@@ -315,6 +317,38 @@ map.on('load', async function() {
                     'interpolate', ['linear'], ['zoom'],
                     11.5, 2,
                     14, 3
+                ]
+            }
+        });
+
+        // Add transmission constraint boundaries (B6, B7, B8, etc)
+        map.addSource('transmission-boundaries', {
+            type: 'geojson',
+            data: transmissionBoundariesData
+        });
+
+        map.addLayer({
+            id: 'transmission-boundaries',
+            type: 'line',
+            source: 'transmission-boundaries',
+            layout: {
+                'visibility': 'none'  // Hidden by default
+            },
+            paint: {
+                'line-color': '#FF6B6B',  // Red/orange to indicate constraint
+                'line-width': [
+                    'interpolate', ['linear'], ['zoom'],
+                    5, 3,
+                    10, 5,
+                    14, 7
+                ],
+                'line-opacity': 0.85,
+                'line-dasharray': [2, 2],  // Dashed line pattern
+                'line-blur': [
+                    'interpolate', ['linear'], ['zoom'],
+                    5, 2,
+                    10, 3,
+                    14, 4
                 ]
             }
         });
@@ -905,6 +939,37 @@ map.on('click', 'transmission-lines', (e) => {
         .addTo(map);
 });
 
+// Transmission constraint boundaries popup
+map.on('click', 'transmission-boundaries', (e) => {
+    const props = e.features[0].properties;
+    new maplibregl.Popup({ className: 'custom-popup' })
+        .setLngLat(e.lngLat)
+        .setHTML(`
+            <div class="popup-title">${props.name}</div>
+            <div class="popup-row">
+                <span class="popup-label">Boundary ID</span>
+                <span class="popup-value">${props.boundary_id}</span>
+            </div>
+            <div class="popup-row">
+                <span class="popup-label">Description</span>
+                <span class="popup-value">${props.description}</span>
+            </div>
+            ${props.typical_capacity_gw ? `
+            <div class="popup-row">
+                <span class="popup-label">Capacity</span>
+                <span class="popup-value">${props.typical_capacity_gw} GW</span>
+            </div>
+            ` : ''}
+            ${props.annual_constraint_cost_gbp ? `
+            <div class="popup-row">
+                <span class="popup-label">Annual Cost</span>
+                <span class="popup-value">£${(props.annual_constraint_cost_gbp / 1000000).toFixed(0)}M</span>
+            </div>
+            ` : ''}
+        `)
+        .addTo(map);
+});
+
 // OSM Substations popup
 map.on('click', 'osm-substations', (e) => {
     const props = e.features[0].properties;
@@ -1069,6 +1134,8 @@ map.on('mouseenter', 'power-plants-points', () => { map.getCanvas().style.cursor
 map.on('mouseleave', 'power-plants-points', () => { map.getCanvas().style.cursor = ''; });
 map.on('mouseenter', 'transmission-lines', () => { map.getCanvas().style.cursor = 'pointer'; });
 map.on('mouseleave', 'transmission-lines', () => { map.getCanvas().style.cursor = ''; });
+map.on('mouseenter', 'transmission-boundaries', () => { map.getCanvas().style.cursor = 'pointer'; });
+map.on('mouseleave', 'transmission-boundaries', () => { map.getCanvas().style.cursor = ''; });
 map.on('mouseenter', 'osm-substations', () => { map.getCanvas().style.cursor = 'pointer'; });
 map.on('mouseleave', 'osm-substations', () => { map.getCanvas().style.cursor = ''; });
 
@@ -1109,6 +1176,7 @@ function initializeSidebar() {
     // Layer mapping: data-layer attribute -> Mapbox layer IDs or special handling
     const layerMapping = {
         'osm-substations': ['osm-substations'],
+        'transmission-boundaries': ['transmission-boundaries'],
         'distribution-132kv': ['distribution-132kv-lines'],
         'distribution-66kv': ['distribution-66kv-lines'],
         'distribution-33kv': ['distribution-33kv-lines'],
