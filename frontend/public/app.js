@@ -89,8 +89,8 @@ map.on('load', async function() {
                 'visibility': 'none'
             },
             paint: {
-                'fill-color': '#00D9FF',
-                'fill-opacity': 0.08
+                'fill-color': '#9D4EDD',  // Purple
+                'fill-opacity': 0.12
             }
         });
 
@@ -102,9 +102,9 @@ map.on('load', async function() {
                 'visibility': 'none'
             },
             paint: {
-                'line-color': '#00D9FF',
+                'line-color': '#9D4EDD',  // Purple
                 'line-width': 1,
-                'line-opacity': 0.3
+                'line-opacity': 0.4
             }
         });
 
@@ -357,7 +357,7 @@ map.on('load', async function() {
             clusterRadius: 50
         });
 
-        // Clustered circles
+        // Clustered circles - BuPu gradient (blue to purple)
         map.addLayer({
             id: 'tec-clusters',
             type: 'circle',
@@ -370,10 +370,10 @@ map.on('load', async function() {
                 'circle-color': [
                     'step',
                     ['get', 'point_count'],
-                    '#51bbd6', 10,
-                    '#f1f075', 50,
-                    '#f28cb1', 100,
-                    '#e15554'
+                    '#9ECAE1', 10,      // Light blue
+                    '#8C96C6', 50,      // Blue-purple
+                    '#8C6BB1', 100,     // Purple
+                    '#88419D'           // Dark purple
                 ],
                 'circle-radius': [
                     'step',
@@ -407,7 +407,7 @@ map.on('load', async function() {
             }
         });
 
-        // Individual unclustered points
+        // Individual unclustered points - Purple tones
         map.addLayer({
             id: 'tec-points',
             type: 'circle',
@@ -420,11 +420,11 @@ map.on('load', async function() {
                 'circle-color': [
                     'match',
                     ['get', 'category'],
-                    'Storage', '#667eea',
-                    'Solar', '#f6ad55',
-                    'Wind', '#48bb78',
-                    'Other', '#cbd5e0',
-                    '#cbd5e0'
+                    'Storage', '#9D4EDD',     // Purple
+                    'Solar', '#C77DFF',       // Light purple
+                    'Wind', '#7209B7',        // Dark purple
+                    'Other', '#B5A2CA',       // Light purple-grey
+                    '#B5A2CA'
                 ],
                 'circle-radius': 6,
                 'circle-opacity': 0.7,
@@ -445,7 +445,7 @@ map.on('load', async function() {
             clusterRadius: 40
         });
 
-        // Power plant clusters
+        // Power plant clusters - BuPu gradient
         map.addLayer({
             id: 'power-plants-clusters',
             type: 'circle',
@@ -459,10 +459,10 @@ map.on('load', async function() {
                 'circle-color': [
                     'step',
                     ['get', 'point_count'],
-                    '#22c55e', 10,
-                    '#eab308', 50,
-                    '#f97316', 100,
-                    '#ef4444'
+                    '#BFD3E6', 10,      // Very light blue
+                    '#9ECAE1', 50,      // Light blue
+                    '#8C96C6', 100,     // Blue-purple
+                    '#88419D'           // Dark purple
                 ],
                 'circle-radius': [
                     'step',
@@ -497,7 +497,7 @@ map.on('load', async function() {
             }
         });
 
-        // Individual power plants
+        // Individual power plants - Purple/blue-purple palette
         map.addLayer({
             id: 'power-plants-points',
             type: 'circle',
@@ -511,14 +511,14 @@ map.on('load', async function() {
                 'circle-color': [
                     'match',
                     ['get', 'plant_type'],
-                    'wind', '#22c55e',
-                    'offshore_wind', '#06b6d4',
-                    'so', '#facc15',
-                    'gas', '#f97316',
-                    'bio', '#84cc16',
-                    'hy', '#3b82f6',
-                    'bat', '#a855f7',
-                    '#94a3b8'
+                    'wind', '#9D4EDD',          // Purple
+                    'offshore_wind', '#7209B7', // Dark purple
+                    'so', '#C77DFF',            // Light purple
+                    'gas', '#5A189A',           // Deep purple
+                    'bio', '#B5A2CA',           // Light purple-grey
+                    'hy', '#4895EF',            // Blue
+                    'bat', '#E0AAFF',           // Very light purple
+                    '#B5A2CA'                   // Default light purple-grey
                 ],
                 'circle-radius': [
                     'interpolate', ['linear'], ['get', 'capacity_mw'],
@@ -656,7 +656,7 @@ map.on('load', async function() {
                 'visibility': 'none'
             },
             paint: {
-                'circle-color': '#00D9FF',
+                'circle-color': '#9D4EDD',  // Purple
                 'circle-radius': [
                     'interpolate', ['linear'], ['zoom'],
                     6, 3,
