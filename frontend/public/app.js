@@ -335,21 +335,16 @@ map.on('load', async function() {
                 'visibility': 'none'  // Hidden by default
             },
             paint: {
-                'line-color': '#FF6B6B',  // Red/orange to indicate constraint
+                'line-color': '#FFFFFF',  // White dashed lines
                 'line-width': [
-                    'interpolate', ['linear'], ['zoom'],
-                    5, 3,
-                    10, 5,
-                    14, 7
-                ],
-                'line-opacity': 0.85,
-                'line-dasharray': [2, 2],  // Dashed line pattern
-                'line-blur': [
                     'interpolate', ['linear'], ['zoom'],
                     5, 2,
                     10, 3,
                     14, 4
-                ]
+                ],
+                'line-opacity': 0.6,
+                'line-dasharray': [3, 2],  // Dashed line pattern
+                'line-blur': 1
             }
         });
 
