@@ -1,11 +1,8 @@
 // MapTiler API Key
 const maptilerKey = 'pBqFsEIXtl1EslcPHqtS';
 
-// Set a dummy Mapbox token (required by mapbox-gl even when using MapTiler)
-mapboxgl.accessToken = 'pk.eyJ1IjoiZHVtbXkiLCJhIjoiY2sifQ.dummy';
-
-// Initialize map with MapTiler Backdrop Dark basemap
-const map = new mapboxgl.Map({
+// Initialize map with MapTiler Backdrop Dark basemap (using MapLibre GL JS)
+const map = new maplibregl.Map({
     container: 'map',
     style: 'https://api.maptiler.com/maps/backdrop-dark/style.json?key=' + maptilerKey,
     center: [-2.5, 54.5],
@@ -15,7 +12,7 @@ const map = new mapboxgl.Map({
 });
 
 // Add navigation controls
-map.addControl(new mapboxgl.NavigationControl({
+map.addControl(new maplibregl.NavigationControl({
     showCompass: false
 }), 'top-right');
 
@@ -694,7 +691,7 @@ console.log('Press R to reset view, use mouse/trackpad to navigate');
 // Add interactivity - popups on click
 map.on('click', 'gsp-fill', (e) => {
     const props = e.features[0].properties;
-    new mapboxgl.Popup()
+    new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(`
             <div style="color: #1a1a1a; font-size: 13px;">
@@ -707,7 +704,7 @@ map.on('click', 'gsp-fill', (e) => {
 
 map.on('click', 'south-wales-primary-fill', (e) => {
     const props = e.features[0].properties;
-    new mapboxgl.Popup()
+    new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(`
             <div style="color: #1a1a1a; font-size: 13px;">
@@ -724,7 +721,7 @@ map.on('click', 'south-wales-primary-fill', (e) => {
 map.on('click', 'spen-boundary-fill', (e) => {
     const props = e.features[0].properties;
     const areaName = props.license_area === 'SPD' ? 'SP Distribution (Central & South Scotland)' : 'SP Manweb (Merseyside, Cheshire, North Wales)';
-    new mapboxgl.Popup()
+    new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(`
             <div style="color: #1a1a1a; font-size: 13px;">
@@ -752,7 +749,7 @@ map.on('click', 'tec-clusters', (e) => {
 
 map.on('click', 'tec-points', (e) => {
     const props = e.features[0].properties;
-    new mapboxgl.Popup()
+    new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(`
             <div style="color: #1a1a1a; font-size: 12px; max-width: 250px;">
@@ -795,7 +792,7 @@ map.on('click', 'power-plants-points', (e) => {
     const plantTypeName = plantTypeNames[props.plant_type] || props.plant_type;
     const plantColor = props.plant_type === 'wind' ? '#22c55e' : props.plant_type === 'offshore_wind' ? '#06b6d4' : props.plant_type === 'so' ? '#facc15' : props.plant_type === 'gas' ? '#f97316' : '#94a3b8';
 
-    new mapboxgl.Popup()
+    new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(`
             <div style="color: #1a1a1a; font-size: 12px; max-width: 250px;">
@@ -814,7 +811,7 @@ map.on('click', 'transmission-lines', (e) => {
     const voltage = props.voltage_kv || props.voltage || 'Unknown';
     const voltageColor = voltage == 400 ? '#FFD700' : voltage == 275 ? '#FFA500' : voltage == 220 ? '#FF6347' : '#9370DB';
 
-    new mapboxgl.Popup()
+    new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(`
             <div style="color: #fff; font-size: 13px; min-width: 200px;">
@@ -842,7 +839,7 @@ map.on('click', 'transmission-lines', (e) => {
 // OSM Substations popup
 map.on('click', 'osm-substations', (e) => {
     const props = e.features[0].properties;
-    new mapboxgl.Popup()
+    new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(`
             <div style="color: #fff; font-size: 13px; min-width: 250px;">
@@ -872,7 +869,7 @@ map.on('click', 'osm-substations', (e) => {
 // Distribution line popups
 map.on('click', 'distribution-132kv-lines', (e) => {
     const props = e.features[0].properties;
-    new mapboxgl.Popup()
+    new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(`
             <div style="color: #fff; font-size: 13px; min-width: 200px;">
@@ -903,7 +900,7 @@ map.on('click', 'distribution-132kv-lines', (e) => {
 
 map.on('click', 'distribution-66kv-lines', (e) => {
     const props = e.features[0].properties;
-    new mapboxgl.Popup()
+    new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(`
             <div style="color: #fff; font-size: 13px; min-width: 200px;">
@@ -934,7 +931,7 @@ map.on('click', 'distribution-66kv-lines', (e) => {
 
 map.on('click', 'distribution-33kv-lines', (e) => {
     const props = e.features[0].properties;
-    new mapboxgl.Popup()
+    new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(`
             <div style="color: #fff; font-size: 13px; min-width: 200px;">
@@ -980,7 +977,7 @@ map.on('click', 'substations-clusters', (e) => {
 
 map.on('click', 'substations-points', (e) => {
     const props = e.features[0].properties;
-    new mapboxgl.Popup()
+    new maplibregl.Popup()
         .setLngLat(e.lngLat)
         .setHTML(`
             <div style="color: #fff; font-size: 13px; min-width: 250px;">
