@@ -1,11 +1,10 @@
-// Mapbox Access Token
-const token = 'pk.eyJ1Ijoi' + 'bmlraGlsZGVzYWkiLCJhIjoiY213MWU2Ynd2MDljYjJ5b2dnbHF3cXZyciJ9.' + 'WJvu-Nt1DLf5mDRmAGBAZg';
-mapboxgl.accessToken = token;
+// MapTiler API Key
+const maptilerKey = 'pBqFsEIXtl1EslcPHqtS';
 
-// Initialize map with Mapbox dark style
+// Initialize map with MapTiler Backdrop Dark basemap
 const map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/dark-v11',
+    style: `https://api.maptiler.com/maps/backdrop-dark/style.json?key=${maptilerKey}`,
     center: [-2.5, 54.5],
     zoom: 5.8,
     pitch: 0,
