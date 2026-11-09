@@ -1,10 +1,13 @@
 // MapTiler API Key
 const maptilerKey = 'pBqFsEIXtl1EslcPHqtS';
 
+// Set a dummy Mapbox token (required by mapbox-gl even when using MapTiler)
+mapboxgl.accessToken = 'pk.eyJ1IjoiZHVtbXkiLCJhIjoiY2sifQ.dummy';
+
 // Initialize map with MapTiler Backdrop Dark basemap
 const map = new mapboxgl.Map({
     container: 'map',
-    style: `https://api.maptiler.com/maps/backdrop-dark/style.json?key=${maptilerKey}`,
+    style: 'https://api.maptiler.com/maps/backdrop-dark/style.json?key=' + maptilerKey,
     center: [-2.5, 54.5],
     zoom: 5.8,
     pitch: 0,
@@ -16,8 +19,12 @@ map.addControl(new mapboxgl.NavigationControl({
     showCompass: false
 }), 'top-right');
 
+// Debug: Log when style starts loading
+console.log('Map initializing with style:', 'https://api.maptiler.com/maps/backdrop-dark/style.json');
+
 // Hide loading screen and add data layers when map loads
 map.on('load', async function() {
+    console.log('✅ Map loaded successfully!');
     try {
         // Load all data sources
         const [
@@ -671,10 +678,13 @@ map.on('load', async function() {
 
 // Error handling
 map.on('error', function(e) {
-    console.error('Map error:', e);
+    console.error('❌ Map error:', e);
+    console.error('Error details:', e.error);
+    console.error('Error message:', e.error ? e.error.message : 'Unknown error');
     const loading = document.getElementById('loading');
     if (loading) {
-        loading.innerHTML = '<div style="color: #e15554;">Error loading map</div>';
+        const errorMsg = e.error && e.error.message ? e.error.message : 'Error loading map';
+        loading.innerHTML = '<div style="color: #e15554; font-size: 12px; padding: 20px;">' + errorMsg + '</div>';
     }
 });
 
