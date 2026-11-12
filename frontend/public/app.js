@@ -671,7 +671,10 @@ map.on('load', async function() {
         });
 
         // Add UK Buildings vector tiles
-        // Tile server running at http://localhost:8080
+        // NOTE: Disabled in production - 35GB tiles need cloud hosting
+        // Tile server runs at http://localhost:8080 for local development only
+        // TODO: Host tiles on AWS S3, Cloudflare R2, or MapTiler Cloud
+        /*
         map.addSource('uk-buildings', {
             type: 'vector',
             tiles: ['http://localhost:8080/data/uk_buildings/{z}/{x}/{y}.pbf'],
@@ -709,6 +712,7 @@ map.on('load', async function() {
                 'line-opacity': 0.5
             }
         });
+        */
 
         console.log('✅ Buildings layer added (29.5M footprints)');
 
